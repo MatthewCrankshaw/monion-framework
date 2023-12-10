@@ -12,7 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
+      useFactory: (configService: ConfigService) => {
         const configuratorService = new Configurator(configService);
         const config = configuratorService.getORMConfig();
         console.log(config);

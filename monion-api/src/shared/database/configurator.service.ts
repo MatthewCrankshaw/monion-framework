@@ -12,8 +12,6 @@ export class Configurator {
       username: this.config.get<string>('POSTGRES_USER'),
       password: this.config.get<string>('POSTGRES_PASSWORD'),
       database: this.config.get<string>('POSTGRES_DB'),
-      synchronize: true,
-      logging: true,
       entities: ['**.*.entity{.ts,.js}'],
       migrationsTableName: 'migrations',
       migrations: ['**.*.migration{.ts,.js}'],

@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   api:
     container_name: monion-api
@@ -16,11 +18,14 @@ services:
       - 3000:3000
     depends_on:
       - postgres
+    networks:
+      - monion-network
   postgres:
     container_name: monion-db
     image: postgres
     restart: always
     environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -28,6 +33,11 @@ services:
       - '5432:5432'
     volumes:
       - docker-nest-postgres:/var/lib/postgresql/data
+    networks:
+      - monion-network
 
 volumes:
   docker-nest-postgres:
+
+networks:
+  monion-network:

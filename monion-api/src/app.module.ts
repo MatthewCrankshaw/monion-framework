@@ -15,7 +15,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       useFactory: (configService: ConfigService) => {
         const configuratorService = new Configurator(configService);
         const config = configuratorService.getORMConfig();
-        console.log(config);
         return config;
       },
       inject: [ConfigService],

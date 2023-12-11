@@ -35,6 +35,19 @@ services:
       - docker-nest-postgres:/var/lib/postgresql/data
     networks:
       - monion-network
+  app:
+    container_name: app
+    build:
+      dockerfile: Dockerfile
+      context: monion-fe/
+      target: development
+    volumes:
+      - ./monion-fe:/usr/src/app
+    command: npm run start
+    ports:
+     - 80:80
+    depends_on:
+      - api
 
 volumes:
   docker-nest-postgres:

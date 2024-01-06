@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 export class Configurator {
   constructor(private config: ConfigService) {}
 
-  public getORMConfig(): TypeOrmModuleOptions {
+  public getORMConfig(): PostgresConnectionOptions {
     return {
       type: 'postgres',
       host: this.config.get<string>('POSTGRES_HOST'),

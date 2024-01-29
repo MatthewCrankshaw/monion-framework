@@ -12,9 +12,11 @@ export class Configurator {
       username: this.config.get<string>('POSTGRES_USER'),
       password: this.config.get<string>('POSTGRES_PASSWORD'),
       database: this.config.get<string>('POSTGRES_DB'),
-      entities: ['**.*.entity{.ts,.js}'],
+      //entities: ['dist/**/*.entity.js'],
+      migrations: ['dist/migrations/**/*.js'],
       migrationsTableName: 'migrations',
-      migrations: ['**.*.migration{.ts,.js}'],
+      migrationsRun: false,
+      synchronize: false,
       ssl: this.config.get<string>('MODE') != 'development',
     };
   }

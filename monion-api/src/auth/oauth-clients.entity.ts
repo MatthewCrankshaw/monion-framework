@@ -1,15 +1,19 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('oauth_clients')
 export class OAuthClients {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @Column('text')
-  @PrimaryColumn()
   client_id: string;
 
   @Column('text')
-  @PrimaryColumn()
   client_secret: string;
 
   @Column('text')
   redirect_url: string;
+
+  @Column('text')
+  grants: string;
 }

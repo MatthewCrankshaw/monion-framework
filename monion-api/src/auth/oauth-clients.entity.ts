@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Users } from 'src/users/users.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('oauth_clients')
 export class OAuthClients {
@@ -16,4 +23,8 @@ export class OAuthClients {
 
   @Column('text')
   grants: string;
+
+  @ManyToOne(() => Users, (user) => user.clients)
+  @JoinColumn({ name: 'user_id' })
+  user: Users;
 }

@@ -10,7 +10,19 @@ export class OauthTables1702454092771 implements MigrationInterface {
           "client_id" text,
           "refresh_token" text,
           "refresh_token_expires_at" TIMESTAMP WITHOUT TIME ZONE,
-          "user_id" uuid
+          "user_id" uuid,
+          "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await queryRunner.query(`
+      CREATE TABLE "users" (
+        "id" uuid PRIMARY KEY,
+        "username" TEXT,
+        "password" TEXT,
+        "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
@@ -20,15 +32,10 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "client_id" TEXT,
         "client_secret" TEXT,
         "redirect_url" TEXT,
-        "grants" TEXT[]
-      );
-    `);
-
-    await queryRunner.query(`
-      CREATE TABLE "user" (
-        "id" uuid PRIMARY KEY,
-        "username" TEXT,
-        "password" TEXT
+        "grants" TEXT[],
+        "user_id" uuid REFERENCES "users"("id"),
+        "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
@@ -39,7 +46,9 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "expires_at"  TIMESTAMP WITHOUT TIME ZONE,
         "redirect_uri" TEXT,
         "client_id" uuid,
-        "user_id" uuid
+        "user_id" uuid,
+        "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
   }
@@ -47,7 +56,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE "oauth_tokens";`);
     await queryRunner.query(`DROP TABLE "oauth_clients";`);
-    await queryRunner.query(`DROP TABLE "user";`);
+    await queryRunner.query(`DROP TABLE "users";`);
     await queryRunner.query(`DROP TABLE "oauth_authorisation_codes"`);
   }
 }

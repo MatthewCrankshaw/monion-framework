@@ -9,17 +9,34 @@ import {
 import { OAuthClients } from './oauth-clients.entity';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+import { Users } from 'src/users/users.entity';
 
 @Injectable()
 export class OAuthClientCredentialsModel implements ClientCredentialsModel {
   constructor(
     @InjectRepository(OAuthClients)
     private readonly clientRepository: Repository<OAuthClients>,
+    @InjectRepository(Users)
+    private readonly userRepository: Repository<Users>,
   ) {}
 
-  getUserFromClient(client: Client): Promise<User | Falsey> {
-    throw new Error('getUserFromClient not implemented.');
+  public async getUserFromClient(client: Client): Promise<User | Falsey> {
+    const user = client.user;
+    if (user) {
+      return user;
+    } else {
+      const loadedUser = await this.userRepository.findOne({
+        relations: ['clients'],
+        where: {
+          clients: {
+            id: client.id,
+          },
+        },
+      });
+      return loadedUser;
+    }
   }
+
   validateScope?(
     user: User,
     client: Client,
@@ -27,6 +44,7 @@ export class OAuthClientCredentialsModel implements ClientCredentialsModel {
   ): Promise<string[] | Falsey> {
     throw new Error('validateScope not implemented.');
   }
+
   generateAccessToken?(
     client: Client,
     user: User,

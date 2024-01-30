@@ -8,7 +8,6 @@ import OAuth2Server = require('@node-oauth/oauth2-server');
 import { DataSource } from 'typeorm';
 import { DatabaseModule } from 'src/database/database.module';
 import { OAuthClients } from './oauth-clients.entity';
-import { Users } from 'src/users/users.entity';
 
 @Module({
   imports: [DatabaseModule],
@@ -31,7 +30,6 @@ import { Users } from 'src/users/users.entity';
       useFactory: (dataSource: DataSource) => {
         return new OAuthClientCredentialsModel(
           dataSource.getRepository(OAuthClients),
-          dataSource.getRepository(Users),
         );
       },
     },

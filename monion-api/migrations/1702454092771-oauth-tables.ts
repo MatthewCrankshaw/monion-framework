@@ -33,6 +33,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "client_secret" TEXT,
         "redirect_url" TEXT,
         "grants" TEXT[],
+        "scopes" TEXT[],
         "user_id" uuid REFERENCES "users"("id"),
         "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP

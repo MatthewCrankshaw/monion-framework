@@ -1,6 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  Client,
   ClientCredentialsModel,
   Falsey,
   Token,
@@ -16,35 +15,31 @@ export class OAuthClientCredentialsModel implements ClientCredentialsModel {
   constructor(
     @InjectRepository(OAuthClients)
     private readonly clientRepository: Repository<OAuthClients>,
-    @InjectRepository(Users)
-    private readonly userRepository: Repository<Users>,
   ) {}
 
-  public async getUserFromClient(client: Client): Promise<User | Falsey> {
+  public async getUserFromClient(client: OAuthClients): Promise<User | Falsey> {
     return client.user;
   }
 
-  validateScope?(
-    user: User,
-    client: Client,
+  validateScope(
+    user: Users,
+    client: OAuthClients,
     scope?: string[],
   ): Promise<string[] | Falsey> {
-    console.log(scope);
-    throw new Error('validateScope not implemented.');
-  }
+    const clientScopes = client.scopes;
 
-  generateAccessToken?(
-    client: Client,
-    user: User,
-    scope: string[],
-  ): Promise<string> {
-    throw new Error('generateAccessToken not implemented.');
+    const validScopes = scope.every((value) => clientScopes.includes(value));
+    if (validScopes) {
+      return Promise.resolve(scope);
+    } else {
+      return null;
+    }
   }
 
   public async getClient(
     clientId: string,
     clientSecret: string,
-  ): Promise<Client | Falsey> {
+  ): Promise<OAuthClients | Falsey> {
     try {
       const client = await this.clientRepository.findOne({
         where: {
@@ -59,7 +54,12 @@ export class OAuthClientCredentialsModel implements ClientCredentialsModel {
       throw error;
     }
   }
-  saveToken(token: Token, client: Client, user: User): Promise<Token | Falsey> {
+  saveToken(
+    token: Token,
+    client: OAuthClients,
+    user: User,
+  ): Promise<Token | Falsey> {
+    console.log(token);
     throw new Error('saveToken not implemented.');
   }
   getAccessToken(accessToken: string): Promise<Token | Falsey> {

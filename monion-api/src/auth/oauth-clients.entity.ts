@@ -21,8 +21,11 @@ export class OAuthClients {
   @Column('text')
   redirect_url: string;
 
-  @Column('text')
-  grants: string;
+  @Column('text', { array: true })
+  grants: string[];
+
+  @Column('text', { array: true })
+  scopes: string[];
 
   @ManyToOne(() => Users, (user) => user.clients, { eager: true })
   @JoinColumn({ name: 'user_id' })

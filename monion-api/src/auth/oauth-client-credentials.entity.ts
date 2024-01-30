@@ -21,20 +21,7 @@ export class OAuthClientCredentialsModel implements ClientCredentialsModel {
   ) {}
 
   public async getUserFromClient(client: Client): Promise<User | Falsey> {
-    const user = client.user;
-    if (user) {
-      return user;
-    } else {
-      const loadedUser = await this.userRepository.findOne({
-        relations: ['clients'],
-        where: {
-          clients: {
-            id: client.id,
-          },
-        },
-      });
-      return loadedUser;
-    }
+    return client.user;
   }
 
   validateScope?(
@@ -42,6 +29,7 @@ export class OAuthClientCredentialsModel implements ClientCredentialsModel {
     client: Client,
     scope?: string[],
   ): Promise<string[] | Falsey> {
+    console.log(scope);
     throw new Error('validateScope not implemented.');
   }
 

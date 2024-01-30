@@ -9,7 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
-@Entity({ name: 'user' })
+@Entity({ name: 'users' })
 export class Users {
   @PrimaryGeneratedColumn('uuid')
   id: string;

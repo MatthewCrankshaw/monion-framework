@@ -24,7 +24,7 @@ export class OAuthClients {
   @Column('text')
   grants: string;
 
-  @ManyToOne(() => Users, (user) => user.clients)
+  @ManyToOne(() => Users, (user) => user.clients, { eager: true })
   @JoinColumn({ name: 'user_id' })
   user: Users;
 }

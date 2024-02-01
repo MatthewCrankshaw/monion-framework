@@ -17,6 +17,9 @@ export class OauthController {
       oauthResponse,
     );
 
-    res.json(token);
+    res.json({
+      accessToken: token.accessToken,
+      accessTokenExpiresAt: token.accessTokenExpiresAt,
+    });
   }
 }

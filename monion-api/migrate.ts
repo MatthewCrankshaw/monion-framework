@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { OAuthClients } from 'src/auth/oauth-clients.entity';
+import { OAuthTokens } from 'src/auth/oauth-tokens.entity';
 import { Users } from 'src/users/users.entity';
 import { DataSource } from 'typeorm';
 
@@ -12,7 +13,7 @@ export const dataSource = new DataSource({
   username: config.get<string>('POSTGRES_USER'),
   password: config.get<string>('POSTGRES_PASSWORD'),
   database: config.get<string>('POSTGRES_DB'),
-  entities: [OAuthClients, Users],
+  entities: [OAuthClients, OAuthTokens, Users],
   migrationsTableName: 'migrations',
   migrations: [__dirname + '/migrations/**{.ts,.js}'],
   migrationsRun: false,

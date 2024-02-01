@@ -1,5 +1,7 @@
 // user.entity.ts
+import { User } from '@node-oauth/oauth2-server';
 import { OAuthClients } from 'src/auth/oauth-clients.entity';
+import { OAuthTokens } from 'src/auth/oauth-tokens.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,7 +12,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'users' })
-export class Users {
+export class Users implements User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -20,12 +22,15 @@ export class Users {
   @Column({ type: 'text', nullable: true })
   password: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @OneToMany(() => OAuthClients, (client) => client.user)
   clients: OAuthClients[];
+
+  @OneToMany(() => OAuthTokens, (token) => token.user)
+  tokens: OAuthTokens[];
 }

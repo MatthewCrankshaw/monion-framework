@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  Client,
   ClientCredentialsModel,
   Falsey,
   Token,
@@ -9,12 +10,15 @@ import { OAuthClients } from './oauth-clients.entity';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Users } from 'src/users/users.entity';
+import { OAuthTokens } from './oauth-tokens.entity';
 
 @Injectable()
 export class OAuthClientCredentialsModel implements ClientCredentialsModel {
   constructor(
     @InjectRepository(OAuthClients)
     private readonly clientRepository: Repository<OAuthClients>,
+    @InjectRepository(OAuthTokens)
+    private readonly tokenRepository: Repository<OAuthTokens>,
   ) {}
 
   public async getUserFromClient(client: OAuthClients): Promise<User | Falsey> {
@@ -23,7 +27,7 @@ export class OAuthClientCredentialsModel implements ClientCredentialsModel {
 
   validateScope(
     user: Users,
-    client: OAuthClients,
+    client: Client,
     scope?: string[],
   ): Promise<string[] | Falsey> {
     const clientScopes = client.scopes;
@@ -39,12 +43,12 @@ export class OAuthClientCredentialsModel implements ClientCredentialsModel {
   public async getClient(
     clientId: string,
     clientSecret: string,
-  ): Promise<OAuthClients | Falsey> {
+  ): Promise<Client | Falsey> {
     try {
       const client = await this.clientRepository.findOne({
         where: {
-          client_id: clientId,
-          client_secret: clientSecret,
+          clientId,
+          clientSecret,
         },
       });
 
@@ -54,18 +58,31 @@ export class OAuthClientCredentialsModel implements ClientCredentialsModel {
       throw error;
     }
   }
-  saveToken(
+
+  public async saveToken(
     token: Token,
-    client: OAuthClients,
+    client: Client,
     user: User,
   ): Promise<Token | Falsey> {
-    console.log(token);
-    throw new Error('saveToken not implemented.');
+    try {
+      const tokenEntity = this.tokenRepository.create({
+        accessToken: token.accessToken,
+        refreshToken: token.refreshToken,
+        accessTokenExpiresAt: token.accessTokenExpiresAt,
+        refreshTokenExpiresAt: token.refreshTokenExpiresAt,
+        client,
+        user,
+      });
+
+      const savedToken = await this.tokenRepository.save(tokenEntity);
+      return Promise.resolve(savedToken);
+    } catch (error) {
+      console.log('Error saving access token', error);
+      return null;
+    }
   }
-  getAccessToken(accessToken: string): Promise<Token | Falsey> {
-    throw new Error('getAccessToken not implemented.');
-  }
-  verifyScope?(token: Token, scope: string[]): Promise<boolean> {
-    throw new Error('verifyScope not implemented.');
+
+  public async getAccessToken(accessToken: string): Promise<Token | Falsey> {
+    return this.tokenRepository.findOne({ where: { accessToken } });
   }
 }

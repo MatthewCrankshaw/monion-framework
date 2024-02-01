@@ -1,25 +1,36 @@
+import { Client } from '@node-oauth/oauth2-server';
 import { Users } from 'src/users/users.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { OAuthTokens } from './oauth-tokens.entity';
 
 @Entity('oauth_clients')
-export class OAuthClients {
+export class OAuthClients implements Client {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('text')
-  client_id: string;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @Column('text')
-  client_secret: string;
+  clientId: string;
 
   @Column('text')
-  redirect_url: string;
+  clientSecret: string;
+
+  @Column('text')
+  redirectUrl: string;
 
   @Column('text', { array: true })
   grants: string[];
@@ -28,6 +39,9 @@ export class OAuthClients {
   scopes: string[];
 
   @ManyToOne(() => Users, (user) => user.clients, { eager: true })
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'userId' })
   user: Users;
+
+  @OneToMany(() => OAuthTokens, (token) => token.client)
+  tokens: OAuthTokens[];
 }

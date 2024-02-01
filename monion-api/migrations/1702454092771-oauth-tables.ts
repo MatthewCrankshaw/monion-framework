@@ -3,53 +3,53 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class OauthTables1702454092771 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      CREATE TABLE "oauth_tokens" (
-          "id" uuid PRIMARY KEY,
-          "access_token" text,
-          "access_token_expires_at" TIMESTAMP WITHOUT TIME ZONE,
-          "client_id" text,
-          "refresh_token" text,
-          "refresh_token_expires_at" TIMESTAMP WITHOUT TIME ZONE,
-          "user_id" uuid,
-          "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-
-    await queryRunner.query(`
       CREATE TABLE "users" (
-        "id" uuid PRIMARY KEY,
+        "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "username" TEXT,
-        "password" TEXT,
-        "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        "password" TEXT
       );
     `);
 
     await queryRunner.query(`
       CREATE TABLE "oauth_clients" (
-        "id" uuid PRIMARY KEY,
-        "client_id" TEXT,
-        "client_secret" TEXT,
-        "redirect_url" TEXT,
+        "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "clientId" TEXT,
+        "clientSecret" TEXT,
+        "redirectUrl" TEXT,
         "grants" TEXT[],
         "scopes" TEXT[],
-        "user_id" uuid REFERENCES "users"("id"),
-        "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        "userId" uuid REFERENCES "users"("id")
+      );
+    `);
+
+    await queryRunner.query(`
+      CREATE TABLE "oauth_tokens" (
+          "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+          "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          "accessToken" text,
+          "accessTokenExpiresAt" TIMESTAMP WITHOUT TIME ZONE,
+          "clientId" uuid REFERENCES "oauth_clients"("id"),
+          "refreshToken" text,
+          "refreshTokenExpiresAt" TIMESTAMP WITHOUT TIME ZONE,
+          "userId" uuid REFERENCES "users"("id")
       );
     `);
 
     await queryRunner.query(`
       CREATE TABLE "oauth_authorisation_codes" (
-        "id" uuid PRIMARY KEY,
-        "authorisation_code" TEXT,
-        "expires_at"  TIMESTAMP WITHOUT TIME ZONE,
-        "redirect_uri" TEXT,
-        "client_id" uuid,
-        "user_id" uuid,
-        "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        "authorisationCode" TEXT,
+        "expiresAt"  TIMESTAMP WITHOUT TIME ZONE,
+        "redirectUri" TEXT,
+        "clientId" uuid,
+        "userId" uuid,
+        "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
   }

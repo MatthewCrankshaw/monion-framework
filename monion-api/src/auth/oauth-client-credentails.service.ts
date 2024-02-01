@@ -10,6 +10,9 @@ export class OAuthClientCredentialsService {
     response: OAuth2Server.Response,
     options?: OAuth2Server.TokenOptions,
   ): Promise<OAuth2Server.Token> {
-    return this.server.token(request, response, options);
+    const token = await this.server.token(request, response, options);
+    delete token.client;
+    delete token.user;
+    return token;
   }
 }

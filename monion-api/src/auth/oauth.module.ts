@@ -5,13 +5,14 @@ import { OAuthClientCredentialsModel } from './oauth-client-credentials.entity';
 import { OauthController } from './oauth.controller';
 import { ServerOptions } from '@node-oauth/oauth2-server';
 import OAuth2Server = require('@node-oauth/oauth2-server');
-import { DataSource } from 'typeorm';
 import { DatabaseModule } from 'src/database/database.module';
+import { DataSource } from 'typeorm';
 import { OAuthClients } from './oauth-clients.entity';
 import { OAuthTokens } from './oauth-tokens.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, ConfigModule],
   controllers: [OauthController],
   providers: [
     {

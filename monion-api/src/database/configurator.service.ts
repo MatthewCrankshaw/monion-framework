@@ -12,7 +12,6 @@ export class Configurator {
       username: this.config.get<string>('POSTGRES_USER'),
       password: this.config.get<string>('POSTGRES_PASSWORD'),
       database: this.config.get<string>('POSTGRES_DB'),
-      //entities: ['dist/**/*.entity.js'],
       migrations: ['dist/migrations/**/*.js'],
       migrationsTableName: 'migrations',
       migrationsRun: false,

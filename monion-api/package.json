@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build && cp ./ec_p384_private.pem dist && cp ./ec_p384_public.pem dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -29,6 +29,7 @@
     "@nestjs/platform-express": "^10.3.0",
     "@nestjs/typeorm": "^10.0.1",
     "@node-oauth/oauth2-server": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.14",
     "rxjs": "^7.8.1",

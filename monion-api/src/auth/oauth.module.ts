@@ -1,7 +1,6 @@
 // oauth2.module.ts
 import { Module } from '@nestjs/common';
-import { OAuthClientCredentialsService } from './oauth-client-credentails.service';
-import { OAuthClientCredentialsModel } from './oauth-client-credentials.entity';
+import { OAuthClientCredentialsModel } from './oauth-client-credentials.service';
 import { OauthController } from './oauth.controller';
 import { ServerOptions } from '@node-oauth/oauth2-server';
 import OAuth2Server = require('@node-oauth/oauth2-server');
@@ -10,8 +9,7 @@ import { DataSource } from 'typeorm';
 import { OAuthClients } from './oauth-clients.entity';
 import { OAuthTokens } from './oauth-tokens.entity';
 import { ConfigModule } from '@nestjs/config';
-import { OAuthAuthorizationCodeService } from './oauth-code-flow.service';
-import { OAuthCodeFlowModel } from './oauth-code-flow.entity';
+import { OAuthCodeFlowModel } from './oauth-code-flow.service';
 import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
 
 @Module({
@@ -19,25 +17,23 @@ import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
   controllers: [OauthController],
   providers: [
     {
-      provide: OAuthClientCredentialsService,
+      provide: OAuth2Server,
       inject: [OAuthClientCredentialsModel],
       useFactory: (model: OAuthClientCredentialsModel) => {
         const options: ServerOptions = {
           model: model,
         };
-        const server = new OAuth2Server(options);
-        return new OAuthClientCredentialsService(server);
+        return new OAuth2Server(options);
       },
     },
     {
-      provide: OAuthAuthorizationCodeService,
+      provide: OAuth2Server,
       inject: [OAuthCodeFlowModel],
       useFactory: (model: OAuthCodeFlowModel) => {
         const options: ServerOptions = {
           model: model,
         };
-        const server = new OAuth2Server(options);
-        return new OAuthAuthorizationCodeService(server);
+        return new OAuth2Server(options);
       },
     },
     {

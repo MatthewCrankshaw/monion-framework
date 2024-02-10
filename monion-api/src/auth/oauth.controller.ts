@@ -1,21 +1,12 @@
 // oauth2.controller.ts
-import {
-  Controller,
-  Get,
-  Post,
-  Query,
-  Request,
-  Response,
-} from '@nestjs/common';
-import { OAuthClientCredentialsService } from './oauth-client-credentails.service';
+import { Controller, Get, Post, Request, Response } from '@nestjs/common';
 import OAuth2Server = require('@node-oauth/oauth2-server');
-import { OAuthAuthorizationCodeService } from './oauth-code-flow.service';
 
 @Controller('oauth')
 export class OauthController {
   constructor(
-    protected clientCredentials: OAuthClientCredentialsService,
-    protected authorizationCode: OAuthAuthorizationCodeService,
+    protected clientCredentials: OAuth2Server,
+    protected authorizationCode: OAuth2Server,
   ) {}
 
   @Post('token')
@@ -31,6 +22,9 @@ export class OauthController {
         oauthRequest,
         oauthResponse,
       );
+
+      delete token.client;
+      delete token.user;
 
       res.json({
         accessToken: token.accessToken,
@@ -48,11 +42,12 @@ export class OauthController {
       oauthRequest,
       oauthResponse,
     );
+
+    // Redirect with the code
     res.json({
+      redirectUri: code.redirectUri,
       code: code.authorizationCode,
+      test: code.expiresAt,
     });
-    // Validate the client_id, redirect_uri, and code_challenge from the query parameters
-    // Generate an authorization code and associate it with the client_id and code_challenge
-    // Redirect the user back to the redirect_uri with the authorization code
   }
 }

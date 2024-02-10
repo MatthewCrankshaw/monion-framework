@@ -1,5 +1,6 @@
 // user.entity.ts
 import { User } from '@node-oauth/oauth2-server';
+import { OAuthAuthorisationCodes } from 'src/auth/oauth-authorisation-codes.entity';
 import { OAuthClients } from 'src/auth/oauth-clients.entity';
 import { OAuthTokens } from 'src/auth/oauth-tokens.entity';
 import {
@@ -33,4 +34,7 @@ export class Users implements User {
 
   @OneToMany(() => OAuthTokens, (token) => token.user)
   tokens: OAuthTokens[];
+
+  @OneToMany(() => OAuthAuthorisationCodes, (code) => code.user)
+  authorizationCodes: OAuthAuthorisationCodes[];
 }

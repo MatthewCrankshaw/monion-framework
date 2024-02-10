@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { OAuthTokens } from './oauth-tokens.entity';
+import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
 
 @Entity('oauth_clients')
 export class OAuthClients implements Client {
@@ -29,8 +30,8 @@ export class OAuthClients implements Client {
   @Column('text')
   clientSecret: string;
 
-  @Column('text')
-  redirectUrl: string;
+  @Column('text', { name: 'redirectUri' })
+  redirectUris: string;
 
   @Column('text', { array: true })
   grants: string[];
@@ -44,4 +45,7 @@ export class OAuthClients implements Client {
 
   @OneToMany(() => OAuthTokens, (token) => token.client)
   tokens: OAuthTokens[];
+
+  @OneToMany(() => OAuthAuthorisationCodes, (code) => code.client)
+  authorizationCodes: OAuthAuthorisationCodes[];
 }

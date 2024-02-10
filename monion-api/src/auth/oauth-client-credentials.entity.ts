@@ -48,6 +48,9 @@ export class OAuthClientCredentialsModel implements ClientCredentialsModel {
     client: Client,
     scope?: string[],
   ): Promise<string[] | Falsey> {
+    if (scope === undefined) {
+      return Promise.resolve([]);
+    }
     const clientScopes = client.scopes;
 
     const validScopes = scope.every((value) => clientScopes.includes(value));

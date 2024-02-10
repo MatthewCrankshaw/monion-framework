@@ -19,7 +19,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "clientId" TEXT,
         "clientSecret" TEXT,
-        "redirectUrl" TEXT,
+        "redirectUri" TEXT,
         "grants" TEXT[],
         "scopes" TEXT[],
         "userId" uuid REFERENCES "users"("id")
@@ -43,11 +43,14 @@ export class OauthTables1702454092771 implements MigrationInterface {
     await queryRunner.query(`
       CREATE TABLE "oauth_authorisation_codes" (
         "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-        "authorisationCode" TEXT,
+        "authorizationCode" TEXT,
         "expiresAt"  TIMESTAMP WITHOUT TIME ZONE,
         "redirectUri" TEXT,
-        "clientId" uuid,
-        "userId" uuid,
+        "scope" TEXT[],
+        "clientId" uuid REFERENCES "oauth_clients"("id"),
+        "userId" uuid  REFERENCES "users"("id"),
+        "codeChallenge" TEXT,
+        "codeChallengeMethod" TEXT,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );

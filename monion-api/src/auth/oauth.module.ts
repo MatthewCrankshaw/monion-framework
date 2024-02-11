@@ -1,6 +1,5 @@
 // oauth2.module.ts
 import { Module } from '@nestjs/common';
-import { OAuthClientCredentialsModel } from './oauth-client-credentials.service';
 import { OauthController } from './oauth.controller';
 import { ServerOptions } from '@node-oauth/oauth2-server';
 import OAuth2Server = require('@node-oauth/oauth2-server');
@@ -16,16 +15,6 @@ import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
   imports: [DatabaseModule, ConfigModule],
   controllers: [OauthController],
   providers: [
-    {
-      provide: OAuth2Server,
-      inject: [OAuthClientCredentialsModel],
-      useFactory: (model: OAuthClientCredentialsModel) => {
-        const options: ServerOptions = {
-          model: model,
-        };
-        return new OAuth2Server(options);
-      },
-    },
     {
       provide: OAuth2Server,
       inject: [OAuthCodeFlowModel],
@@ -44,16 +33,6 @@ import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
           dataSource.getRepository(OAuthClients),
           dataSource.getRepository(OAuthTokens),
           dataSource.getRepository(OAuthAuthorisationCodes),
-        );
-      },
-    },
-    {
-      provide: OAuthClientCredentialsModel,
-      inject: ['DATA_SOURCE'],
-      useFactory: (dataSource: DataSource) => {
-        return new OAuthClientCredentialsModel(
-          dataSource.getRepository(OAuthClients),
-          dataSource.getRepository(OAuthTokens),
         );
       },
     },

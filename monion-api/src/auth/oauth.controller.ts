@@ -4,33 +4,25 @@ import OAuth2Server = require('@node-oauth/oauth2-server');
 
 @Controller('oauth')
 export class OauthController {
-  constructor(
-    protected clientCredentials: OAuth2Server,
-    protected authorizationCode: OAuth2Server,
-  ) {}
+  constructor(protected authorizationCode: OAuth2Server) {}
 
   @Post('token')
   public async token(@Request() req: any, @Response() res: any) {
     const oauthRequest = new OAuth2Server.Request(req);
     const oauthResponse = new OAuth2Server.Response(res);
 
-    const grantType = oauthRequest.body.grant_type;
+    const token = await this.authorizationCode.token(
+      oauthRequest,
+      oauthResponse,
+    );
 
-    if (grantType === 'authorization_code') {
-    } else if (grantType === 'client_credentials') {
-      const token = await this.clientCredentials.token(
-        oauthRequest,
-        oauthResponse,
-      );
+    delete token.client;
+    delete token.user;
 
-      delete token.client;
-      delete token.user;
-
-      res.json({
-        accessToken: token.accessToken,
-        accessTokenExpiresAt: token.accessTokenExpiresAt,
-      });
-    }
+    res.json({
+      accessToken: token.accessToken,
+      accessTokenExpiresAt: token.accessTokenExpiresAt,
+    });
   }
 
   @Get('authorize')
@@ -43,11 +35,9 @@ export class OauthController {
       oauthResponse,
     );
 
-    // Redirect with the code
-    res.json({
-      redirectUri: code.redirectUri,
-      code: code.authorizationCode,
-      test: code.expiresAt,
-    });
+    const redirectUrl = code.redirectUri;
+
+    // Send a redirect response to send the user to the redirect URI with the authorization code
+    res.redirect(303, redirectUrl + `?code=${code.authorizationCode}`);
   }
 }

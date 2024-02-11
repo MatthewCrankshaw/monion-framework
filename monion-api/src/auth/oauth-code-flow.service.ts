@@ -2,6 +2,7 @@ import {
   AuthorizationCode,
   AuthorizationCodeModel,
   Client,
+  ClientCredentialsModel,
   Falsey,
   Token,
   User,
@@ -11,24 +12,24 @@ import { OAuthClients } from './oauth-clients.entity';
 import { Repository } from 'typeorm';
 import { OAuthTokens } from './oauth-tokens.entity';
 import crypto = require('crypto');
+import jwt = require('jsonwebtoken');
+import fs = require('fs');
 
 @Injectable()
-export class OAuthCodeFlowModel implements AuthorizationCodeModel {
+export class OAuthCodeFlowModel
+  implements AuthorizationCodeModel, ClientCredentialsModel
+{
   constructor(
     protected clientRepository: Repository<OAuthClients>,
     protected tokenRepository: Repository<OAuthTokens>,
     protected authorizationCodeRepository: Repository<AuthorizationCode>,
   ) {}
 
-  generateRefreshToken?(
-    client: Client,
-    user: User,
-    scope: string[],
-  ): Promise<string> {
-    throw new Error('generate refresh token Method not implemented.');
+  public getUserFromClient(client: Client): Promise<User | Falsey> {
+    return client.user;
   }
 
-  generateAuthorizationCode(
+  public generateAuthorizationCode(
     client: Client,
     user: User,
     scope: string[],
@@ -37,13 +38,7 @@ export class OAuthCodeFlowModel implements AuthorizationCodeModel {
     return Promise.resolve(authorizationCode);
   }
 
-  getAuthorizationCode(
-    authorizationCode: string,
-  ): Promise<Falsey | AuthorizationCode> {
-    throw new Error('get authorization code Method not implemented.');
-  }
-
-  saveAuthorizationCode(
+  public saveAuthorizationCode(
     code: Pick<
       AuthorizationCode,
       | 'authorizationCode'
@@ -68,11 +63,7 @@ export class OAuthCodeFlowModel implements AuthorizationCodeModel {
     return this.authorizationCodeRepository.save(authorizationCode);
   }
 
-  revokeAuthorizationCode(code: AuthorizationCode): Promise<boolean> {
-    throw new Error('revoke authorization code Method not implemented.');
-  }
-
-  validateScope(
+  public validateScope(
     user: User,
     client: Client,
     scope?: string[],
@@ -91,16 +82,31 @@ export class OAuthCodeFlowModel implements AuthorizationCodeModel {
     }
   }
 
-  validateRedirectUri?(redirect_uri: string, client: Client): Promise<boolean> {
-    throw new Error('validate redirect URI Method not implemented.');
-  }
-
-  generateAccessToken?(
+  public generateAccessToken?(
     client: Client,
     user: User,
     scope: string[],
   ): Promise<string> {
-    throw new Error('generate access token Method not implemented.');
+    const secretKey = this.getKey();
+
+    const payload = {
+      sub: user.id,
+      iss: 'monion',
+      aud: client.clientId,
+      scope: scope.join(' '),
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    };
+
+    return jwt.sign(payload, secretKey, { algorithm: 'ES384' });
+  }
+
+  /**
+   * Fetch the private key from the file system.
+   *
+   * @returns {string}
+   */
+  protected getKey(): string {
+    return fs.readFileSync('res/development_private_key.pem', 'utf8');
   }
 
   public async getClient(
@@ -122,18 +128,78 @@ export class OAuthCodeFlowModel implements AuthorizationCodeModel {
     }
   }
 
-  saveToken(token: Token, client: Client, user: User): Promise<Falsey | Token> {
-    throw new Error('save token Method not implemented.');
+  public async saveToken(
+    token: Token,
+    client: Client,
+    user: User,
+  ): Promise<Falsey | Token> {
+    try {
+      const tokenEntity = this.createTokenEntity(token, client, user);
+      const savedToken = await this.tokenRepository.save(tokenEntity);
+      return Promise.resolve(savedToken);
+    } catch (error) {
+      console.log('Error saving access token', error);
+      return null;
+    }
   }
 
-  getAccessToken(accessToken: string): Promise<Falsey | Token> {
+  /**
+   * Create a token entity based on the provided token, client, and user.
+   *
+   * @param {Token} token
+   * @param {Client} client
+   * @param {User} user
+   *
+   * @returns {OAuthTokens}
+   */
+  private createTokenEntity(
+    token: Token,
+    client: Client,
+    user: User,
+  ): OAuthTokens {
+    return this.tokenRepository.create({
+      accessToken: token.accessToken,
+      refreshToken: token.refreshToken,
+      accessTokenExpiresAt: token.accessTokenExpiresAt,
+      refreshTokenExpiresAt: token.refreshTokenExpiresAt,
+      client,
+      user,
+    });
+  }
+
+  public getAccessToken(accessToken: string): Promise<Falsey | Token> {
     return this.tokenRepository.findOne({
       where: { accessToken },
       relations: ['user'],
     });
   }
 
-  verifyScope?(token: Token, scope: string[]): Promise<boolean> {
+  public verifyScope?(token: Token, scope: string[]): Promise<boolean> {
     throw new Error('verify scope Method not implemented.');
+  }
+
+  public generateRefreshToken?(
+    client: Client,
+    user: User,
+    scope: string[],
+  ): Promise<string> {
+    throw new Error('generate refresh token Method not implemented.');
+  }
+
+  public validateRedirectUri(
+    redirect_uri: string,
+    client: Client,
+  ): Promise<boolean> {
+    return Promise.resolve(client.redirectUris.includes(redirect_uri));
+  }
+
+  public getAuthorizationCode(
+    authorizationCode: string,
+  ): Promise<Falsey | AuthorizationCode> {
+    throw new Error('get authorization code Method not implemented.');
+  }
+
+  public revokeAuthorizationCode(code: AuthorizationCode): Promise<boolean> {
+    throw new Error('revoke authorization code Method not implemented.');
   }
 }

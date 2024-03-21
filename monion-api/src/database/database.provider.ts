@@ -1,5 +1,5 @@
 import { Provider } from '@nestjs/common';
-import { dataSource } from 'migrate';
+import { dataSource } from 'data-source';
 
 export const databaseProviders: Provider[] = [
   {

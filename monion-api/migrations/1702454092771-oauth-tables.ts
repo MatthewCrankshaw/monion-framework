@@ -59,8 +59,8 @@ export class OauthTables1702454092771 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE "oauth_tokens";`);
+    await queryRunner.query(`DROP TABLE "oauth_authorisation_codes"`);
     await queryRunner.query(`DROP TABLE "oauth_clients";`);
     await queryRunner.query(`DROP TABLE "users";`);
-    await queryRunner.query(`DROP TABLE "oauth_authorisation_codes"`);
   }
 }

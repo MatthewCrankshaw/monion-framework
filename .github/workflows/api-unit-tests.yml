@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd monion-api
-          pnpm ci
+          pnpm install
 
       - name: Run tests
         run: |

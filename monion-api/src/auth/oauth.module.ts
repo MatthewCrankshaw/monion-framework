@@ -1,4 +1,3 @@
-// oauth2.module.ts
 import { Module } from '@nestjs/common';
 import { OauthController } from './oauth.controller';
 import { ServerOptions } from '@node-oauth/oauth2-server';
@@ -12,6 +11,9 @@ import { OAuthCodeFlowModel } from './oauth-code-flow.service';
 import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
 import { Users } from 'src/users/users.entity';
 
+/**
+ * Module for handling OAuth authentication and authorization.
+ */
 @Module({
   imports: [DatabaseModule, ConfigModule],
   controllers: [OauthController],

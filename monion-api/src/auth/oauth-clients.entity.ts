@@ -30,6 +30,9 @@ export class OAuthClients implements Client {
   @Column('text')
   clientSecret: string;
 
+  @Column('text')
+  clientName: string;
+
   @Column('text', { name: 'redirectUri' })
   redirectUris: string;
 

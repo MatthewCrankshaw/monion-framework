@@ -19,10 +19,11 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "clientId" TEXT,
         "clientSecret" TEXT,
+        "clientName" TEXT,
         "redirectUri" TEXT,
         "grants" TEXT[],
         "scopes" TEXT[],
-        "userId" uuid REFERENCES "users"("id")
+        "userId" uuid REFERENCES "users"("id") ON DELETE CASCADE
       );
     `);
 
@@ -33,10 +34,10 @@ export class OauthTables1702454092771 implements MigrationInterface {
           "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           "accessToken" text,
           "accessTokenExpiresAt" TIMESTAMP WITHOUT TIME ZONE,
-          "clientId" uuid REFERENCES "oauth_clients"("id"),
+          "clientId" uuid REFERENCES "oauth_clients"("id") ON DELETE CASCADE,
           "refreshToken" text,
           "refreshTokenExpiresAt" TIMESTAMP WITHOUT TIME ZONE,
-          "userId" uuid REFERENCES "users"("id")
+          "userId" uuid REFERENCES "users"("id") ON DELETE CASCADE
       );
     `);
 

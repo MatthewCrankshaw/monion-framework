@@ -10,6 +10,7 @@ import { OAuthTokens } from './oauth-tokens.entity';
 import { ConfigModule } from '@nestjs/config';
 import { OAuthCodeFlowModel } from './oauth-code-flow.service';
 import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
+import { Users } from 'src/users/users.entity';
 
 @Module({
   imports: [DatabaseModule, ConfigModule],
@@ -33,6 +34,7 @@ import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
           dataSource.getRepository(OAuthClients),
           dataSource.getRepository(OAuthTokens),
           dataSource.getRepository(OAuthAuthorisationCodes),
+          dataSource.getRepository(Users),
         );
       },
     },

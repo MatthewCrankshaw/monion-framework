@@ -16,13 +16,23 @@ export class OauthController {
       oauthResponse,
     );
 
+    const grantType = oauthRequest.body.grant_type;
+
     delete token.client;
     delete token.user;
 
-    res.json({
-      accessToken: token.accessToken,
-      accessTokenExpiresAt: token.accessTokenExpiresAt,
-    });
+    if (grantType === 'client_credentials') {
+      res.json({
+        accessToken: token.accessToken,
+        accessTokenExpiresAt: token.accessTokenExpiresAt,
+      });
+    } else {
+      res.json({
+        accessToken: token.accessToken,
+        accessTokenExpiresAt: token.accessTokenExpiresAt,
+        refreshToken: token.refreshToken,
+      });
+    }
   }
 
   @Get('authorize')

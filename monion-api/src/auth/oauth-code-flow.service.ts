@@ -4,6 +4,7 @@ import {
   Client,
   ClientCredentialsModel,
   Falsey,
+  PasswordModel,
   Token,
   User,
 } from '@node-oauth/oauth2-server';
@@ -17,13 +18,27 @@ import fs = require('fs');
 
 @Injectable()
 export class OAuthCodeFlowModel
-  implements AuthorizationCodeModel, ClientCredentialsModel
+  implements AuthorizationCodeModel, ClientCredentialsModel, PasswordModel
 {
   constructor(
     protected clientRepository: Repository<OAuthClients>,
     protected tokenRepository: Repository<OAuthTokens>,
     protected authorizationCodeRepository: Repository<AuthorizationCode>,
+    protected userRepository: Repository<User>,
   ) {}
+
+  public async getUser(
+    username: string,
+    password: string,
+    client: Client,
+  ): Promise<User | Falsey> {
+    const user = await this.userRepository.findOne({
+      where: {
+        username,
+      },
+    });
+    return user;
+  }
 
   public getUserFromClient(client: Client): Promise<User | Falsey> {
     return client.user;
@@ -178,12 +193,13 @@ export class OAuthCodeFlowModel
     throw new Error('verify scope Method not implemented.');
   }
 
-  public generateRefreshToken?(
+  public async generateRefreshToken(
     client: Client,
     user: User,
     scope: string[],
   ): Promise<string> {
-    throw new Error('generate refresh token Method not implemented.');
+    const refreshToken = crypto.randomBytes(32).toString('hex');
+    return Promise.resolve(refreshToken);
   }
 
   public validateRedirectUri(

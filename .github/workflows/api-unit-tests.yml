@@ -23,12 +23,15 @@ jobs:
         with:
           node-version: 18
 
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Install dependencies
         run: |
           cd monion-api
-          npm ci
+          pnpm ci
 
       - name: Run tests
         run: |
           cd monion-api
-          npm run test
+          pnpm run test

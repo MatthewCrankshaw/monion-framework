@@ -11,3 +11,7 @@ To run the app in development mode, use the following command:
 ```
 docker compose up
 ```
+
+## License
+
+This repository is an open source library and is licensed under the MIT License. You can find the full text of the license in the [LICENSE](LICENSE) file.

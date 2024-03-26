@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - "monion-api/**"
+      - ".github/workflows/**"
   pull_request:
     branches: [main]
     paths:
       - "monion-api/**"
+      - ".github/workflows/**"
 
 jobs:
   test:

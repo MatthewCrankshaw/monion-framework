@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+.pnpm-store
 
 # Logs
 logs
@@ -26,6 +27,7 @@ lerna-debug.log*
 *.launch
 .settings/
 *.sublime-workspace
+.DS_Store
 
 # IDE - VSCode
 .vscode/*

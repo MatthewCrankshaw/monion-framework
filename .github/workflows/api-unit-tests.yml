@@ -33,7 +33,14 @@ jobs:
           cd monion-api
           pnpm install
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
           cd monion-api
-          pnpm run test
+          npm run test:cov
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          directory: ./monion-api/coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true

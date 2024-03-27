@@ -15,7 +15,7 @@ services:
     # Run a command against the development stage of the image
     command: npm run start:dev
     ports:
-      - 3000:3000
+      - ${PORT_API}:3000
     depends_on:
       - postgres
     networks:
@@ -30,7 +30,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - ${POSTGRES_PORT}:5432
     volumes:
       - docker-nest-postgres:/var/lib/postgresql/data
     networks:
@@ -45,7 +45,7 @@ services:
       - ./monion-fe:/usr/src/app
     command: npm run start
     ports:
-      - 80:80
+      - ${PORT_WEB}:80
     depends_on:
       - api
 

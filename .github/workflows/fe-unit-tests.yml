@@ -1,0 +1,36 @@
+name: Run FE Unit Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "monion-fe/**"
+      - ".github/workflows/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "monion-fe/**"
+      - ".github/workflows/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          cd monion-fe
+          npm install
+
+      - name: Run tests
+        run: |
+          cd monion-fe
+          npm run test

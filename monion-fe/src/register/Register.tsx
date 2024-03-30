@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -11,12 +11,12 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
-import { handleLogin } from "../utilities/loginHandler";
 
-export const Login = (): ReactElement => {
+export const Register = (): ReactElement => {
   const navigate = useNavigate();
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
 
   return (
     <Container maxWidth="lg">
@@ -33,13 +33,10 @@ export const Login = (): ReactElement => {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Login
+              Register
             </Typography>
             <Button color="inherit" onClick={() => navigate("/")}>
               Home
-            </Button>
-            <Button color="inherit" onClick={() => navigate("/register")}>
-              Register
             </Button>
           </Toolbar>
         </AppBar>
@@ -53,26 +50,34 @@ export const Login = (): ReactElement => {
           <TextField
             label="Username"
             variant="outlined"
+            style={{ marginBottom: "1rem", minWidth: "20rem" }}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+          />
+          <TextField
+            label="Email"
+            variant="outlined"
             style={{ marginBottom: "1rem", minWidth: "20rem" }}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             label="Password"
             variant="outlined"
             type="password"
+            style={{ marginBottom: "1rem", minWidth: "20rem" }}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ marginBottom: "1rem", minWidth: "20rem" }}
           />
           <Button
             variant="contained"
             color="primary"
-            size="large"
             style={{ minWidth: "10rem" }}
-            onClick={() => handleLogin(username, password)}
+            onClick={() => {
+              /* handle registration */
+            }}
           >
-            Login
+            Register
           </Button>
         </Box>
       </Box>

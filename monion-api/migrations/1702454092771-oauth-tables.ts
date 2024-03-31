@@ -18,7 +18,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        "username" TEXT,
+        "username" TEXT UNIQUE,
         "password" TEXT
       );
     `);
@@ -29,7 +29,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        "clientId" TEXT,
+        "clientId" TEXT UNIQUE,
         "clientSecret" TEXT,
         "clientName" TEXT,
         "redirectUri" TEXT,
@@ -39,20 +39,35 @@ export class OauthTables1702454092771 implements MigrationInterface {
       );
     `);
 
+    // Create an index on "clientId" and "clientSecret" columns
+    await queryRunner.query(`
+      CREATE INDEX "IDX_clientId_clientSecret" ON "oauth_clients" ("clientId", "clientSecret");
+    `);
+
     // Create the "oauth_tokens" table
     await queryRunner.query(`
       CREATE TABLE "oauth_tokens" (
-          "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-          "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          "accessToken" text,
-          "accessTokenExpiresAt" TIMESTAMP WITHOUT TIME ZONE,
-          "clientId" uuid REFERENCES "oauth_clients"("id") ON DELETE CASCADE,
-          "refreshToken" text,
-          "refreshTokenExpiresAt" TIMESTAMP WITHOUT TIME ZONE,
-          "scope" TEXT[],
-          "userId" uuid REFERENCES "users"("id") ON DELETE CASCADE
+        "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "accessToken" TEXT,
+        "accessTokenExpiresAt" TIMESTAMP WITHOUT TIME ZONE,
+        "clientId" uuid REFERENCES "oauth_clients"("id") ON DELETE CASCADE,
+        "refreshToken" TEXT,
+        "refreshTokenExpiresAt" TIMESTAMP WITHOUT TIME ZONE,
+        "scope" TEXT[],
+        "userId" uuid REFERENCES "users"("id") ON DELETE CASCADE
       );
+    `);
+
+    // Create an index on "refreshToken" column
+    await queryRunner.query(`
+      CREATE INDEX "IDX_refreshToken" ON "oauth_tokens" ("refreshToken");
+    `);
+
+    // Create an index on "accessToken" column
+    await queryRunner.query(`
+      CREATE INDEX "IDX_accessToken" ON "oauth_tokens" ("accessToken");
     `);
 
     // Create the "oauth_authorisation_codes" table

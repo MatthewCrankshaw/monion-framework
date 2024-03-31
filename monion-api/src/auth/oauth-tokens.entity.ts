@@ -59,6 +59,12 @@ export class OAuthTokens implements Token {
   refreshTokenExpiresAt: Date;
 
   /**
+   * The scope of the token.
+   */
+  @Column('text', { array: true })
+  scope: string[];
+
+  /**
    * The OAuth client associated with the token.
    */
   @ManyToOne(() => OAuthClients, (client) => client.tokens)

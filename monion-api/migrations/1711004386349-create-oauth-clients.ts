@@ -41,13 +41,13 @@ export class CreateOauthClients1711004386349 implements MigrationInterface {
       const clientId = randomBytes(16).toString('hex');
       const clientSecret = randomBytes(16).toString('hex');
       await queryRunner.query(
-        'INSERT INTO "oauth_clients" ("clientId", "clientSecret", "clientName", "redirectUri", "grants", "scopes", "userId") VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        'INSERT INTO "oauth_clients" ("clientId", "clientSecret", "clientName", "redirectUri", "grants", "scope", "userId") VALUES ($1, $2, $3, $4, $5, $6, $7)',
         [
           clientId,
           clientSecret,
           'MonionSuperClient',
           'http://localhost:3000',
-          ['client_credentials', 'password'],
+          ['client_credentials', 'password', 'refresh_token'],
           ['super'],
           userId,
         ],

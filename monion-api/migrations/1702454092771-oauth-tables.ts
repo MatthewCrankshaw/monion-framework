@@ -34,7 +34,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "clientName" TEXT,
         "redirectUri" TEXT,
         "grants" TEXT[],
-        "scopes" TEXT[],
+        "scope" TEXT[],
         "userId" uuid REFERENCES "users"("id") ON DELETE CASCADE
       );
     `);
@@ -50,6 +50,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
           "clientId" uuid REFERENCES "oauth_clients"("id") ON DELETE CASCADE,
           "refreshToken" text,
           "refreshTokenExpiresAt" TIMESTAMP WITHOUT TIME ZONE,
+          "scope" TEXT[],
           "userId" uuid REFERENCES "users"("id") ON DELETE CASCADE
       );
     `);

@@ -5,6 +5,8 @@ import {
   ClientCredentialsModel,
   Falsey,
   PasswordModel,
+  RefreshToken,
+  RefreshTokenModel,
   Token,
   User,
 } from '@node-oauth/oauth2-server';
@@ -16,9 +18,19 @@ import crypto = require('crypto');
 import jwt = require('jsonwebtoken');
 import fs = require('fs');
 
+/**
+ * Service for handling OAuth authentication and authorization.
+ */
 @Injectable()
-export class OAuthCodeFlowModel
-  implements AuthorizationCodeModel, ClientCredentialsModel, PasswordModel
+/**
+ * Service class that implements various OAuth models for handling authorization and authentication.
+ */
+export class OAuthService
+  implements
+    AuthorizationCodeModel,
+    ClientCredentialsModel,
+    PasswordModel,
+    RefreshTokenModel
 {
   constructor(
     protected clientRepository: Repository<OAuthClients>,
@@ -26,6 +38,31 @@ export class OAuthCodeFlowModel
     protected authorizationCodeRepository: Repository<AuthorizationCode>,
     protected userRepository: Repository<User>,
   ) {}
+
+  /**
+   * Get a refresh token by the provided refresh token string.
+   *
+   * @param {string} refreshToken
+   *
+   * @returns {Promise<RefreshToken | Falsey>}
+   */
+  public async getRefreshToken(
+    refreshToken: string,
+  ): Promise<RefreshToken | Falsey> {
+    const token = await this.tokenRepository.findOne({
+      where: { refreshToken },
+      relations: ['user', 'client'],
+    });
+    return token || false;
+  }
+
+  public async revokeToken(token: RefreshToken): Promise<boolean> {
+    // TODO Revoke the token by setting it as revoked instead of deleting it
+    const deletedToken = await this.tokenRepository.delete({
+      refreshToken: token.refreshToken,
+    });
+    return deletedToken.affected > 0;
+  }
 
   public async getUser(
     username: string,
@@ -35,6 +72,7 @@ export class OAuthCodeFlowModel
     const user = await this.userRepository.findOne({
       where: {
         username,
+        password,
       },
     });
     return user;
@@ -87,28 +125,32 @@ export class OAuthCodeFlowModel
       return Promise.resolve([]);
     }
 
-    const clientScopes = client.scopes;
+    const clientScope = client.scope;
 
-    const validScopes = scope.every((value) => clientScopes.includes(value));
-    if (validScopes) {
+    const validScope = scope.every((value) => clientScope.includes(value));
+    if (validScope) {
       return Promise.resolve(scope);
     } else {
       return null;
     }
   }
 
-  public generateAccessToken?(
+  public generateAccessToken(
     client: Client,
     user: User,
-    scope: string[],
+    scope: string[] | undefined,
   ): Promise<string> {
     const secretKey = this.getKey();
+    let scopes = '';
+    if (scope && scope.length > 0) {
+      scopes = scope.join(' ');
+    }
 
     const payload = {
       sub: user.id,
       iss: 'monion',
       aud: client.clientId,
-      scope: scope.join(' '),
+      scope: scopes,
       exp: Math.floor(Date.now() / 1000) + 60 * 60,
     };
 
@@ -177,16 +219,18 @@ export class OAuthCodeFlowModel
       refreshToken: token.refreshToken,
       accessTokenExpiresAt: token.accessTokenExpiresAt,
       refreshTokenExpiresAt: token.refreshTokenExpiresAt,
+      scope: token.scope,
       client,
       user,
     });
   }
 
   public getAccessToken(accessToken: string): Promise<Falsey | Token> {
-    return this.tokenRepository.findOne({
+    const token = this.tokenRepository.findOne({
       where: { accessToken },
       relations: ['user'],
     });
+    return token;
   }
 
   public verifyScope?(token: Token, scope: string[]): Promise<boolean> {

@@ -7,9 +7,9 @@ import { DataSource } from 'typeorm';
 import { OAuthClients } from './oauth-clients.entity';
 import { OAuthTokens } from './oauth-tokens.entity';
 import { ConfigModule } from '@nestjs/config';
-import { OAuthCodeFlowModel } from './oauth-code-flow.service';
 import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
 import { Users } from 'src/users/users.entity';
+import { OAuthService } from './oauth.service';
 
 /**
  * Module for handling OAuth authentication and authorization.
@@ -20,8 +20,8 @@ import { Users } from 'src/users/users.entity';
   providers: [
     {
       provide: OAuth2Server,
-      inject: [OAuthCodeFlowModel],
-      useFactory: (model: OAuthCodeFlowModel) => {
+      inject: [OAuthService],
+      useFactory: (model: OAuthService) => {
         const options: ServerOptions = {
           model: model,
         };
@@ -29,10 +29,10 @@ import { Users } from 'src/users/users.entity';
       },
     },
     {
-      provide: OAuthCodeFlowModel,
+      provide: OAuthService,
       inject: ['DATA_SOURCE'],
       useFactory: (dataSource: DataSource) => {
-        return new OAuthCodeFlowModel(
+        return new OAuthService(
           dataSource.getRepository(OAuthClients),
           dataSource.getRepository(OAuthTokens),
           dataSource.getRepository(OAuthAuthorisationCodes),

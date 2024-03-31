@@ -70,7 +70,7 @@ export class OAuthClients implements Client {
    * The scopes of the client.
    */
   @Column('text', { array: true })
-  scopes: string[];
+  scope: string[];
 
   /**
    * The user associated with the client.

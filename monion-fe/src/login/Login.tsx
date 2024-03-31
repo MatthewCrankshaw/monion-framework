@@ -8,15 +8,31 @@ import {
   Box,
   IconButton,
   TextField,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
-import { handleLogin } from "../utilities/loginHandler";
+import { handleLogin } from "../utilities/login/loginHandler";
 
 export const Login = (): ReactElement => {
   const navigate = useNavigate();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState<string>("");
+
+  const login = async () => {
+    try {
+      await handleLogin(username, password);
+      navigate("/");
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Failed to login");
+      }
+    }
+  };
 
   return (
     <Container maxWidth="lg">
@@ -53,6 +69,7 @@ export const Login = (): ReactElement => {
           <TextField
             label="Username"
             variant="outlined"
+            error={errorMessage !== ""}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             style={{ marginBottom: "1rem", minWidth: "20rem" }}
@@ -60,6 +77,7 @@ export const Login = (): ReactElement => {
           <TextField
             label="Password"
             variant="outlined"
+            error={errorMessage !== ""}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -70,10 +88,21 @@ export const Login = (): ReactElement => {
             color="primary"
             size="large"
             style={{ minWidth: "10rem" }}
-            onClick={() => handleLogin(username, password)}
+            onClick={login}
           >
             Login
           </Button>
+          {errorMessage && (
+            <Alert
+              severity="warning"
+              style={{ marginTop: "1rem", minWidth: "20rem" }}
+            >
+              <AlertTitle>Failed to login</AlertTitle>
+              An error occurred during login. Please try again.
+              <br />
+              <strong>Details:</strong> {errorMessage}
+            </Alert>
+          )}
         </Box>
       </Box>
     </Container>

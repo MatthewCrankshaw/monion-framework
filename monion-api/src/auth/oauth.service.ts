@@ -17,6 +17,7 @@ import { OAuthTokens } from './oauth-tokens.entity';
 import crypto = require('crypto');
 import jwt = require('jsonwebtoken');
 import fs = require('fs');
+import * as bcrypt from 'bcryptjs';
 
 /**
  * Service for handling OAuth authentication and authorization.
@@ -67,14 +68,24 @@ export class OAuthService
   public async getUser(
     username: string,
     password: string,
-    client: Client,
+    _client: Client,
   ): Promise<User | Falsey> {
     const user = await this.userRepository.findOne({
       where: {
         username,
-        password,
       },
     });
+
+    if (!user) {
+      return false;
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return false;
+    }
+
     return user;
   }
 

@@ -1,11 +1,11 @@
 import { Controller, Post, Body, Res } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UserRegistrationService } from './user.registration.service';
 import { Users } from './users.entity';
 import { Response } from 'express';
 
 @Controller('user')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class UserController {
+  constructor(private readonly usersService: UserRegistrationService) {}
 
   @Post('register')
   async registerUser(@Body() user: Users, @Res() res: Response): Promise<any> {

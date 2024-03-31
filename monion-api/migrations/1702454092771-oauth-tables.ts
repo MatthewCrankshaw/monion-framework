@@ -18,7 +18,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        "username" TEXT UNIQUE,
+        "username" VARCHAR(254) UNIQUE,
         "password" TEXT
       );
     `);
@@ -29,12 +29,12 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        "clientId" TEXT UNIQUE,
-        "clientSecret" TEXT,
-        "clientName" TEXT,
+        "clientId" VARCHAR(254) UNIQUE,
+        "clientSecret" VARCHAR(254),
+        "clientName" VARCHAR(254),
         "redirectUri" TEXT,
-        "grants" TEXT[],
-        "scope" TEXT[],
+        "grants" VARCHAR(254)[],
+        "scope" VARCHAR(64)[],
         "userId" uuid REFERENCES "users"("id") ON DELETE CASCADE
       );
     `);
@@ -55,7 +55,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "clientId" uuid REFERENCES "oauth_clients"("id") ON DELETE CASCADE,
         "refreshToken" TEXT,
         "refreshTokenExpiresAt" TIMESTAMP WITHOUT TIME ZONE,
-        "scope" TEXT[],
+        "scope" VARCHAR(64)[],
         "userId" uuid REFERENCES "users"("id") ON DELETE CASCADE
       );
     `);
@@ -77,7 +77,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "authorizationCode" TEXT,
         "expiresAt"  TIMESTAMP WITHOUT TIME ZONE,
         "redirectUri" TEXT,
-        "scope" TEXT[],
+        "scope" VARCHAR(64)[],
         "clientId" uuid REFERENCES "oauth_clients"("id"),
         "userId" uuid  REFERENCES "users"("id"),
         "codeChallenge" TEXT,

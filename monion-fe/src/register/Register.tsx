@@ -14,7 +14,6 @@ import { useNavigate } from "react-router-dom";
 
 export const Register = (): ReactElement => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
@@ -48,18 +47,13 @@ export const Register = (): ReactElement => {
           height="80vh"
         >
           <TextField
-            label="Username"
-            variant="outlined"
-            style={{ marginBottom: "1rem", minWidth: "20rem" }}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
             label="Email"
             variant="outlined"
             style={{ marginBottom: "1rem", minWidth: "20rem" }}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
           />
           <TextField
             label="Password"
@@ -67,14 +61,32 @@ export const Register = (): ReactElement => {
             type="password"
             style={{ marginBottom: "1rem", minWidth: "20rem" }}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
           />
           <Button
             variant="contained"
             color="primary"
             style={{ minWidth: "10rem" }}
             onClick={() => {
-              /* handle registration */
+              fetch("http://localhost:3000/user/register", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  username: email,
+                  password: password,
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  navigate("/login");
+                })
+                .catch((error) => {
+                  console.log("Error:", error.message);
+                });
             }}
           >
             Register

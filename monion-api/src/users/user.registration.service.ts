@@ -19,7 +19,6 @@ export class UserRegistrationService {
 
   private async encryptPassword(password: string): Promise<string> {
     const saltRounds = 10;
-    console.log('encrypting password', password);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     return hashedPassword;
   }

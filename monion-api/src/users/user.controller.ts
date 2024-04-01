@@ -6,21 +6,12 @@
  *
  * @returns A Promise that resolves to the created user object.
  */
-import {
-  Controller,
-  Post,
-  Body,
-  Res,
-  Param,
-  Get,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body, Res, Param, Get } from '@nestjs/common';
 import { UserRegistrationService } from './user.registration.service';
 import { Response } from 'express';
 import { UserDto } from './user.dto';
 import { HandlerService } from 'src/error/handler.service';
 import { UserRetrievalService } from './user.retrieval.service';
-import { OAuthMiddleware } from 'src/auth/oauth.middleware';
 
 @Controller('user')
 export class UserController {
@@ -45,7 +36,6 @@ export class UserController {
   }
 
   @Get(':id')
-  @UseGuards(OAuthMiddleware)
   async getUserById(
     @Param('id') id: string,
     @Res() res: Response,

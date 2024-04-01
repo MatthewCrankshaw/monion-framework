@@ -1,35 +1,44 @@
 // oauth2.controller.ts
 import { Controller, Get, Post, Request, Response } from '@nestjs/common';
 import OAuth2Server = require('@node-oauth/oauth2-server');
+import { OAuthHandlerService } from './oauth-handler.service';
 
 @Controller('oauth')
 export class OauthController {
-  constructor(protected authorizationCode: OAuth2Server) {}
+  constructor(
+    protected authorizationCode: OAuth2Server,
+    private readonly handler: OAuthHandlerService,
+  ) {}
 
   @Post('token')
   public async token(@Request() req: any, @Response() res: any) {
     const oauthRequest = new OAuth2Server.Request(req);
     const oauthResponse = new OAuth2Server.Response(res);
 
-    const token = await this.authorizationCode.token(
-      oauthRequest,
-      oauthResponse,
-    );
+    try {
+      const token = await this.authorizationCode.token(
+        oauthRequest,
+        oauthResponse,
+      );
 
-    const grantType = oauthRequest.body.grant_type;
+      const grantType = oauthRequest.body.grant_type;
 
-    if (grantType === 'client_credentials') {
-      res.json({
-        accessToken: token.accessToken,
-        accessTokenExpiresAt: token.accessTokenExpiresAt,
-      });
-    } else {
-      res.json({
-        accessToken: token.accessToken,
-        accessTokenExpiresAt: token.accessTokenExpiresAt.toISOString(),
-        refreshToken: token.refreshToken,
-        refreshTokenExpiresAt: token.refreshTokenExpiresAt.toISOString(),
-      });
+      if (grantType === 'client_credentials') {
+        res.json({
+          accessToken: token.accessToken,
+          accessTokenExpiresAt: token.accessTokenExpiresAt,
+        });
+      } else {
+        res.json({
+          accessToken: token.accessToken,
+          accessTokenExpiresAt: token.accessTokenExpiresAt.toISOString(),
+          refreshToken: token.refreshToken,
+          refreshTokenExpiresAt: token.refreshTokenExpiresAt.toISOString(),
+        });
+      }
+    } catch (error: Error | unknown) {
+      console.log(error);
+      this.handler.handle(error, res);
     }
   }
 

@@ -1,6 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import * as Oauth2Server from '@node-oauth/oauth2-server';
+import { OAuthHandlerService } from './oauth-handler.service';
 
 /**
  * Middleware for OAuth authentication.
@@ -13,7 +14,10 @@ export class OAuthMiddleware implements NestMiddleware {
    *
    * @param oauthServer - The OAuth2 server instance.
    */
-  constructor(private readonly oauthServer: Oauth2Server) {}
+  constructor(
+    private readonly oauthServer: Oauth2Server,
+    private readonly handler: OAuthHandlerService,
+  ) {}
 
   /**
    * Handles the middleware logic.
@@ -30,19 +34,7 @@ export class OAuthMiddleware implements NestMiddleware {
 
       next();
     } catch (error) {
-      if (error instanceof Oauth2Server.OAuthError) {
-        if (error.code >= 400 && error.code < 500) {
-          res.status(error.code).json({ message: error.message });
-          return;
-        }
-
-        res.status(500).json({ message: 'Internal server error' });
-        console.log(error);
-        return;
-      }
-
-      res.status(500).json({ message: 'Internal server error' });
-      console.log(error);
+      this.handler.handle(error, res);
     }
   }
 }

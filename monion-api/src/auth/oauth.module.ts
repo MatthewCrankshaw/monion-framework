@@ -15,6 +15,7 @@ import {
   ACCESS_TOKEN_LIFETIME_SECONDS,
   REFRESH_TOKEN_LIFETIME_SECONDS,
 } from './oauth-lifetime.constants';
+import { OAuthHandlerService } from './oauth-handler.service';
 
 /**
  * Module for handling OAuth authentication and authorization.
@@ -23,6 +24,7 @@ import {
   imports: [DatabaseModule, ConfigModule],
   controllers: [OauthController],
   providers: [
+    OAuthHandlerService,
     {
       provide: OAuth2Server,
       inject: [OAuthService],
@@ -38,9 +40,9 @@ import {
     },
     {
       provide: OAuthMiddleware,
-      inject: [OAuth2Server],
-      useFactory: (server: OAuth2Server) => {
-        return new OAuthMiddleware(server);
+      inject: [OAuth2Server, OAuthHandlerService],
+      useFactory: (server: OAuth2Server, handler: OAuthHandlerService) => {
+        return new OAuthMiddleware(server, handler);
       },
     },
     {
@@ -56,6 +58,6 @@ import {
       },
     },
   ],
-  exports: [OAuthModule, OAuth2Server],
+  exports: [OAuthModule, OAuth2Server, OAuthHandlerService],
 })
 export class OAuthModule {}

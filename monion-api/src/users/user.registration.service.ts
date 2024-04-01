@@ -13,12 +13,12 @@ export class UserRegistrationService {
     private usersRepository: Repository<UserEntity>,
   ) {}
 
-  public async registerUser(user: UserDto): Promise<UserEntity> {
+  public async registerUser(user: UserDto): Promise<UserDto> {
     await this.checkUsernameUnique(user.username);
 
     user.password = await this.encryptPassword(user);
-    const newUser = this.createUser(user);
-    return await this.usersRepository.save(newUser);
+    const newUser = await this.createUser(user);
+    return new UserDto(newUser);
   }
 
   protected async checkUsernameUnique(username: string): Promise<void> {
@@ -31,9 +31,10 @@ export class UserRegistrationService {
     }
   }
 
-  protected createUser(user: UserDto): UserEntity {
+  protected async createUser(user: UserDto): Promise<UserEntity> {
     const entity = new UserEntity(user);
-    return this.usersRepository.create(entity);
+    const savedEntity = await this.usersRepository.save(entity);
+    return savedEntity;
   }
 
   protected async encryptPassword(user: UserDto): Promise<string> {

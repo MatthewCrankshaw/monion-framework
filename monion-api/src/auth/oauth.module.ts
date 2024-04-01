@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { OAuthAuthorisationCodeEntity } from './oauth-authorisation-code.entity';
 import { UserEntity } from 'src/users/user.entity';
 import { OAuthService } from './oauth.service';
+import { OAuthMiddleware } from './oauth.middleware';
 
 /**
  * Module for handling OAuth authentication and authorization.
@@ -29,6 +30,13 @@ import { OAuthService } from './oauth.service';
       },
     },
     {
+      provide: OAuthMiddleware,
+      inject: [OAuth2Server],
+      useFactory: (server: OAuth2Server) => {
+        return new OAuthMiddleware(server);
+      },
+    },
+    {
       provide: OAuthService,
       inject: ['DATA_SOURCE'],
       useFactory: (dataSource: DataSource) => {
@@ -41,6 +49,6 @@ import { OAuthService } from './oauth.service';
       },
     },
   ],
-  exports: [OAuthModule],
+  exports: [OAuthModule, OAuth2Server],
 })
 export class OAuthModule {}

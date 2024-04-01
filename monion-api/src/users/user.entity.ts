@@ -19,6 +19,9 @@ import { UserDto } from './user.dto';
 export class UserEntity implements UserInterface {
   constructor(dto: UserDto) {
     if (dto !== undefined) {
+      this.id = dto.id;
+      this.createdAt = dto.createdAt;
+      this.updatedAt = dto.updatedAt;
       this.username = dto.username;
       this.password = dto.password;
     }

@@ -6,16 +6,27 @@
  *
  * @returns A Promise that resolves to the created user object.
  */
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Param,
+  Get,
+  UseGuards,
+} from '@nestjs/common';
 import { UserRegistrationService } from './user.registration.service';
 import { Response } from 'express';
 import { UserDto } from './user.dto';
 import { HandlerService } from 'src/error/handler.service';
+import { UserRetrievalService } from './user.retrieval.service';
+import { OAuthMiddleware } from 'src/auth/oauth.middleware';
 
 @Controller('user')
 export class UserController {
   constructor(
     private readonly usersService: UserRegistrationService,
+    private readonly retrievalService: UserRetrievalService,
     private readonly handler: HandlerService,
   ) {}
 
@@ -26,15 +37,34 @@ export class UserController {
   ): Promise<any> {
     try {
       const createdUser = await this.usersService.registerUser(user);
-
-      res.json({
-        id: createdUser.id,
-        createdAt: createdUser.createdAt,
-        updatedAt: createdUser.updatedAt,
-        username: createdUser.username,
-      });
+      const responseData = this.makeResponse(createdUser);
+      res.json(responseData);
     } catch (error: unknown) {
       this.handler.handle(error, res);
     }
+  }
+
+  @Get(':id')
+  @UseGuards(OAuthMiddleware)
+  async getUserById(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const user = await this.retrievalService.getById(id);
+      const responseData = this.makeResponse(user);
+      res.json(responseData);
+    } catch (error: unknown) {
+      this.handler.handle(error, res);
+    }
+  }
+
+  protected makeResponse(user: UserDto): any {
+    return {
+      id: user.id,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
+      username: user.username,
+    };
   }
 }

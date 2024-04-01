@@ -7,7 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { OAuthClients } from './oauth-clients.entity';
-import { Users } from 'src/users/users.entity';
+import { UserEntity } from 'src/users/user.entity';
 
 /**
  * Represents an entity for OAuth authorization codes.
@@ -36,9 +36,9 @@ export class OAuthAuthorisationCodes implements AuthorizationCode {
   /**
    * The user associated with the authorization code.
    */
-  @ManyToOne(() => Users, (user) => user.authorizationCodes)
+  @ManyToOne(() => UserEntity, (user) => user.authorizationCodes)
   @JoinColumn({ name: 'userId' })
-  user: Users;
+  user: UserEntity;
 
   /**
    * The redirect URI associated with the authorization code.

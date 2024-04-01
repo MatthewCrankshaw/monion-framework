@@ -1,5 +1,5 @@
 import { Client } from '@node-oauth/oauth2-server';
-import { Users } from 'src/users/users.entity';
+import { UserEntity } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -75,9 +75,9 @@ export class OAuthClients implements Client {
   /**
    * The user associated with the client.
    */
-  @ManyToOne(() => Users, (user) => user.clients, { eager: true })
+  @ManyToOne(() => UserEntity, (user) => user.clients, { eager: true })
   @JoinColumn({ name: 'userId' })
-  user: Users;
+  user: UserEntity;
 
   /**
    * The tokens issued to the client.

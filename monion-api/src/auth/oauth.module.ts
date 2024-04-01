@@ -8,7 +8,7 @@ import { OAuthClients } from './oauth-clients.entity';
 import { OAuthTokens } from './oauth-tokens.entity';
 import { ConfigModule } from '@nestjs/config';
 import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
-import { Users } from 'src/users/users.entity';
+import { UserEntity } from 'src/users/user.entity';
 import { OAuthService } from './oauth.service';
 
 /**
@@ -36,7 +36,7 @@ import { OAuthService } from './oauth.service';
           dataSource.getRepository(OAuthClients),
           dataSource.getRepository(OAuthTokens),
           dataSource.getRepository(OAuthAuthorisationCodes),
-          dataSource.getRepository(Users),
+          dataSource.getRepository(UserEntity),
         );
       },
     },

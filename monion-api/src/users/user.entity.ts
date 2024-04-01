@@ -1,4 +1,4 @@
-import { User } from '@node-oauth/oauth2-server';
+import { User as UserInterface } from '@node-oauth/oauth2-server';
 import { OAuthAuthorisationCodes } from 'src/auth/oauth-authorisation-codes.entity';
 import { OAuthClients } from 'src/auth/oauth-clients.entity';
 import { OAuthTokens } from 'src/auth/oauth-tokens.entity';
@@ -10,12 +10,20 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { UserDto } from './user.dto';
 
 /**
  * Represents a user entity in the application.
  */
 @Entity({ name: 'users' })
-export class Users implements User {
+export class UserEntity implements UserInterface {
+  constructor(dto: UserDto) {
+    if (dto !== undefined) {
+      this.username = dto.username;
+      this.password = dto.password;
+    }
+  }
+
   /**
    * The unique identifier for the user.
    */

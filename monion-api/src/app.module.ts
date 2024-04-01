@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OAuthModule } from './auth/oauth.module';
-import { UserModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './users/user.module';
 
 /**
  * The root module of the application.

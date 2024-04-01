@@ -1,5 +1,5 @@
 import { Client, Token } from '@node-oauth/oauth2-server';
-import { Users } from 'src/users/users.entity';
+import { UserEntity } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -74,7 +74,7 @@ export class OAuthTokens implements Token {
   /**
    * The user associated with the token.
    */
-  @ManyToOne(() => Users, (user) => user.tokens)
+  @ManyToOne(() => UserEntity, (user) => user.tokens)
   @JoinColumn({ name: 'userId' })
-  user: Users;
+  user: UserEntity;
 }

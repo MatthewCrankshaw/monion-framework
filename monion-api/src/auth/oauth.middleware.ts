@@ -20,10 +20,9 @@ export class OAuthMiddleware implements NestMiddleware {
    *
    * @param req - The Express request object.
    * @param res - The Express response object.
-   *
    * @param next - The next function to call in the middleware chain.
    */
-  async use(req: Request, res: Response, next: NextFunction) {
+  async use(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const request = new Oauth2Server.Request(req);
       const response = new Oauth2Server.Response(res);
@@ -31,7 +30,19 @@ export class OAuthMiddleware implements NestMiddleware {
 
       next();
     } catch (error) {
-      res.status(401).json({ message: 'Unauthorized' });
+      if (error instanceof Oauth2Server.OAuthError) {
+        if (error.code >= 400 && error.code < 500) {
+          res.status(error.code).json({ message: error.message });
+          return;
+        }
+
+        res.status(500).json({ message: 'Internal server error' });
+        console.log(error);
+        return;
+      }
+
+      res.status(500).json({ message: 'Internal server error' });
+      console.log(error);
     }
   }
 }

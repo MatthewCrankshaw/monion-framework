@@ -11,21 +11,18 @@ import {
   User,
 } from '@node-oauth/oauth2-server';
 import { Injectable } from '@nestjs/common';
-import { OAuthClients } from './oauth-clients.entity';
+import { OAuthClientEntity } from './oauth-client.entity';
 import { Repository } from 'typeorm';
-import { OAuthTokens } from './oauth-tokens.entity';
-import crypto = require('crypto');
-import jwt = require('jsonwebtoken');
-import fs = require('fs');
+import { OAuthTokenEntity } from './oauth-token.entity';
+import * as crypto from 'crypto';
+import * as jwt from 'jsonwebtoken';
+import * as fs from 'fs';
 import * as bcrypt from 'bcryptjs';
 
 /**
  * Service for handling OAuth authentication and authorization.
  */
 @Injectable()
-/**
- * Service class that implements various OAuth models for handling authorization and authentication.
- */
 export class OAuthService
   implements
     AuthorizationCodeModel,
@@ -34,8 +31,8 @@ export class OAuthService
     RefreshTokenModel
 {
   constructor(
-    protected clientRepository: Repository<OAuthClients>,
-    protected tokenRepository: Repository<OAuthTokens>,
+    protected clientRepository: Repository<OAuthClientEntity>,
+    protected tokenRepository: Repository<OAuthTokenEntity>,
     protected authorizationCodeRepository: Repository<AuthorizationCode>,
     protected userRepository: Repository<User>,
   ) {}
@@ -218,13 +215,13 @@ export class OAuthService
    * @param {Client} client
    * @param {User} user
    *
-   * @returns {OAuthTokens}
+   * @returns {OAuthTokenEntity}
    */
   private createTokenEntity(
     token: Token,
     client: Client,
     user: User,
-  ): OAuthTokens {
+  ): OAuthTokenEntity {
     return this.tokenRepository.create({
       accessToken: token.accessToken,
       refreshToken: token.refreshToken,

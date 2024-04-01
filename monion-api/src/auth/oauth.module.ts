@@ -4,10 +4,10 @@ import { ServerOptions } from '@node-oauth/oauth2-server';
 import OAuth2Server = require('@node-oauth/oauth2-server');
 import { DatabaseModule } from 'src/database/database.module';
 import { DataSource } from 'typeorm';
-import { OAuthClients } from './oauth-clients.entity';
-import { OAuthTokens } from './oauth-tokens.entity';
+import { OAuthClientEntity } from './oauth-client.entity';
+import { OAuthTokenEntity } from './oauth-token.entity';
 import { ConfigModule } from '@nestjs/config';
-import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
+import { OAuthAuthorisationCodeEntity } from './oauth-authorisation-code.entity';
 import { UserEntity } from 'src/users/user.entity';
 import { OAuthService } from './oauth.service';
 
@@ -33,9 +33,9 @@ import { OAuthService } from './oauth.service';
       inject: ['DATA_SOURCE'],
       useFactory: (dataSource: DataSource) => {
         return new OAuthService(
-          dataSource.getRepository(OAuthClients),
-          dataSource.getRepository(OAuthTokens),
-          dataSource.getRepository(OAuthAuthorisationCodes),
+          dataSource.getRepository(OAuthClientEntity),
+          dataSource.getRepository(OAuthTokenEntity),
+          dataSource.getRepository(OAuthAuthorisationCodeEntity),
           dataSource.getRepository(UserEntity),
         );
       },

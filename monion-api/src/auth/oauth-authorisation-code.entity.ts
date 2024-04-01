@@ -6,14 +6,14 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { OAuthClients } from './oauth-clients.entity';
+import { OAuthClientEntity } from './oauth-client.entity';
 import { UserEntity } from 'src/users/user.entity';
 
 /**
  * Represents an entity for OAuth authorization codes.
  */
 @Entity('oauth_authorisation_codes')
-export class OAuthAuthorisationCodes implements AuthorizationCode {
+export class OAuthAuthorisationCodeEntity implements AuthorizationCode {
   /**
    * The unique identifier of the authorization code.
    */
@@ -29,9 +29,9 @@ export class OAuthAuthorisationCodes implements AuthorizationCode {
   /**
    * The OAuth client associated with the authorization code.
    */
-  @ManyToOne(() => OAuthClients, (client) => client.authorizationCodes)
+  @ManyToOne(() => OAuthClientEntity, (client) => client.authorizationCodes)
   @JoinColumn({ name: 'clientId' })
-  client: OAuthClients;
+  client: OAuthClientEntity;
 
   /**
    * The user associated with the authorization code.

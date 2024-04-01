@@ -9,13 +9,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { OAuthClients } from './oauth-clients.entity';
+import { OAuthClientEntity } from './oauth-client.entity';
 
 /**
  * Represents an OAuth token entity.
  */
 @Entity('oauth_tokens')
-export class OAuthTokens implements Token {
+export class OAuthTokenEntity implements Token {
   /**
    * The unique identifier of the token.
    */
@@ -67,7 +67,7 @@ export class OAuthTokens implements Token {
   /**
    * The OAuth client associated with the token.
    */
-  @ManyToOne(() => OAuthClients, (client) => client.tokens)
+  @ManyToOne(() => OAuthClientEntity, (client) => client.tokens)
   @JoinColumn({ name: 'clientId' })
   client: Client;
 

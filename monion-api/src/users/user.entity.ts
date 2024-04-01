@@ -1,7 +1,7 @@
 import { User as UserInterface } from '@node-oauth/oauth2-server';
-import { OAuthAuthorisationCodes } from 'src/auth/oauth-authorisation-codes.entity';
-import { OAuthClients } from 'src/auth/oauth-clients.entity';
-import { OAuthTokens } from 'src/auth/oauth-tokens.entity';
+import { OAuthAuthorisationCodeEntity } from 'src/auth/oauth-authorisation-code.entity';
+import { OAuthClientEntity } from 'src/auth/oauth-client.entity';
+import { OAuthTokenEntity } from 'src/auth/oauth-token.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -57,18 +57,18 @@ export class UserEntity implements UserInterface {
   /**
    * The OAuth clients associated with the user.
    */
-  @OneToMany(() => OAuthClients, (client) => client.user)
-  clients: OAuthClients[];
+  @OneToMany(() => OAuthClientEntity, (client) => client.user)
+  clients: OAuthClientEntity[];
 
   /**
    * The OAuth tokens associated with the user.
    */
-  @OneToMany(() => OAuthTokens, (token) => token.user)
-  tokens: OAuthTokens[];
+  @OneToMany(() => OAuthTokenEntity, (token) => token.user)
+  tokens: OAuthTokenEntity[];
 
   /**
    * The OAuth authorization codes associated with the user.
    */
-  @OneToMany(() => OAuthAuthorisationCodes, (code) => code.user)
-  authorizationCodes: OAuthAuthorisationCodes[];
+  @OneToMany(() => OAuthAuthorisationCodeEntity, (code) => code.user)
+  authorizationCodes: OAuthAuthorisationCodeEntity[];
 }

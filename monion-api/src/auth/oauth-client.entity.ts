@@ -10,14 +10,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { OAuthTokens } from './oauth-tokens.entity';
-import { OAuthAuthorisationCodes } from './oauth-authorisation-codes.entity';
+import { OAuthTokenEntity } from './oauth-token.entity';
+import { OAuthAuthorisationCodeEntity } from './oauth-authorisation-code.entity';
 
 /**
  * Represents an OAuth client entity.
  */
 @Entity('oauth_clients')
-export class OAuthClients implements Client {
+export class OAuthClientEntity implements Client {
   /**
    * The unique identifier of the client.
    */
@@ -82,12 +82,12 @@ export class OAuthClients implements Client {
   /**
    * The tokens issued to the client.
    */
-  @OneToMany(() => OAuthTokens, (token) => token.client)
-  tokens: OAuthTokens[];
+  @OneToMany(() => OAuthTokenEntity, (token) => token.client)
+  tokens: OAuthTokenEntity[];
 
   /**
    * The authorization codes issued to the client.
    */
-  @OneToMany(() => OAuthAuthorisationCodes, (code) => code.client)
-  authorizationCodes: OAuthAuthorisationCodes[];
+  @OneToMany(() => OAuthAuthorisationCodeEntity, (code) => code.client)
+  authorizationCodes: OAuthAuthorisationCodeEntity[];
 }

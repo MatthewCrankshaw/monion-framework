@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
-import { OAuthAuthorisationCodes } from 'src/auth/oauth-authorisation-codes.entity';
-import { OAuthClients } from 'src/auth/oauth-clients.entity';
-import { OAuthTokens } from 'src/auth/oauth-tokens.entity';
+import { OAuthAuthorisationCodeEntity } from 'src/auth/oauth-authorisation-code.entity';
+import { OAuthClientEntity } from 'src/auth/oauth-client.entity';
+import { OAuthTokenEntity } from 'src/auth/oauth-token.entity';
 import { UserEntity } from 'src/users/user.entity';
 import { DataSource } from 'typeorm';
 
@@ -14,7 +14,12 @@ export const dataSource = new DataSource({
   username: config.get<string>('POSTGRES_USER'),
   password: config.get<string>('POSTGRES_PASSWORD'),
   database: config.get<string>('POSTGRES_DB'),
-  entities: [OAuthClients, OAuthTokens, OAuthAuthorisationCodes, UserEntity],
+  entities: [
+    OAuthClientEntity,
+    OAuthTokenEntity,
+    OAuthAuthorisationCodeEntity,
+    UserEntity,
+  ],
   migrationsTableName: 'migrations',
   migrations: [__dirname + '/migrations/**{.ts,.js}'],
   migrationsRun: false,

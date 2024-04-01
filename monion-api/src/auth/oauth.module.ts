@@ -11,6 +11,10 @@ import { OAuthAuthorisationCodeEntity } from './oauth-authorisation-code.entity'
 import { UserEntity } from 'src/users/user.entity';
 import { OAuthService } from './oauth.service';
 import { OAuthMiddleware } from './oauth.middleware';
+import {
+  ACCESS_TOKEN_LIFETIME_SECONDS,
+  REFRESH_TOKEN_LIFETIME_SECONDS,
+} from './oauth-lifetime.constants';
 
 /**
  * Module for handling OAuth authentication and authorization.
@@ -25,6 +29,9 @@ import { OAuthMiddleware } from './oauth.middleware';
       useFactory: (model: OAuthService) => {
         const options: ServerOptions = {
           model: model,
+          authorizationCodeLifetime: ACCESS_TOKEN_LIFETIME_SECONDS,
+          accessTokenLifetime: ACCESS_TOKEN_LIFETIME_SECONDS,
+          refreshTokenLifetime: REFRESH_TOKEN_LIFETIME_SECONDS,
         };
         return new OAuth2Server(options);
       },

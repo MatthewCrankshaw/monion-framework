@@ -1,0 +1,3 @@
+export const ACCESS_TOKEN_LIFETIME_SECONDS = 7200; // 2 hour
+
+export const REFRESH_TOKEN_LIFETIME_SECONDS = 2592000; // 30 days

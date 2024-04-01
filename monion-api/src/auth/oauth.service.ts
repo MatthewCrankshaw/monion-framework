@@ -1,6 +1,5 @@
 import {
   AuthorizationCode,
-  AuthorizationCodeModel,
   Client,
   ClientCredentialsModel,
   Falsey,
@@ -18,17 +17,14 @@ import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import * as fs from 'fs';
 import * as bcrypt from 'bcryptjs';
+import { ACCESS_TOKEN_LIFETIME_SECONDS } from './oauth-lifetime.constants';
 
 /**
  * Service for handling OAuth authentication and authorization.
  */
 @Injectable()
 export class OAuthService
-  implements
-    AuthorizationCodeModel,
-    ClientCredentialsModel,
-    PasswordModel,
-    RefreshTokenModel
+  implements ClientCredentialsModel, PasswordModel, RefreshTokenModel
 {
   constructor(
     protected clientRepository: Repository<OAuthClientEntity>,
@@ -99,31 +95,6 @@ export class OAuthService
     return Promise.resolve(authorizationCode);
   }
 
-  public saveAuthorizationCode(
-    code: Pick<
-      AuthorizationCode,
-      | 'authorizationCode'
-      | 'expiresAt'
-      | 'redirectUri'
-      | 'scope'
-      | 'codeChallenge'
-      | 'codeChallengeMethod'
-    >,
-    client: Client,
-    user: User,
-  ): Promise<Falsey | AuthorizationCode> {
-    const authorizationCode = this.authorizationCodeRepository.create({
-      authorizationCode: code.authorizationCode,
-      redirectUri: code.redirectUri,
-      expiresAt: code.expiresAt,
-      scope: code.scope,
-      client,
-      user,
-    });
-
-    return this.authorizationCodeRepository.save(authorizationCode);
-  }
-
   public validateScope(
     user: User,
     client: Client,
@@ -148,7 +119,6 @@ export class OAuthService
     user: User,
     scope: string[] | undefined,
   ): Promise<string> {
-    const secretKey = this.getKey();
     let scopes = '';
     if (scope && scope.length > 0) {
       scopes = scope.join(' ');
@@ -159,19 +129,11 @@ export class OAuthService
       iss: 'monion',
       aud: client.clientId,
       scope: scopes,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      exp: Date.now() + ACCESS_TOKEN_LIFETIME_SECONDS * 1000,
     };
 
+    const secretKey = this.getKey();
     return jwt.sign(payload, secretKey, { algorithm: 'ES384' });
-  }
-
-  /**
-   * Fetch the private key from the file system.
-   *
-   * @returns {string}
-   */
-  protected getKey(): string {
-    return fs.readFileSync('res/development_private_key.pem', 'utf8');
   }
 
   public async getClient(
@@ -208,6 +170,32 @@ export class OAuthService
     }
   }
 
+  public getAccessToken(accessToken: string): Promise<Falsey | Token> {
+    const token = this.tokenRepository.findOne({
+      where: { accessToken },
+      relations: ['user'],
+    });
+    return token;
+  }
+
+  public async generateRefreshToken(
+    client: Client,
+    user: User,
+    scope: string[],
+  ): Promise<string> {
+    const refreshToken = crypto.randomBytes(32).toString('hex');
+    return Promise.resolve(refreshToken);
+  }
+
+  /**
+   * Fetch the private key from the file system.
+   *
+   * @returns {string}
+   */
+  protected getKey(): string {
+    return fs.readFileSync('res/development_private_key.pem', 'utf8');
+  }
+
   /**
    * Create a token entity based on the provided token, client, and user.
    *
@@ -217,7 +205,7 @@ export class OAuthService
    *
    * @returns {OAuthTokenEntity}
    */
-  private createTokenEntity(
+  protected createTokenEntity(
     token: Token,
     client: Client,
     user: User,
@@ -231,43 +219,5 @@ export class OAuthService
       client,
       user,
     });
-  }
-
-  public getAccessToken(accessToken: string): Promise<Falsey | Token> {
-    const token = this.tokenRepository.findOne({
-      where: { accessToken },
-      relations: ['user'],
-    });
-    return token;
-  }
-
-  public verifyScope?(token: Token, scope: string[]): Promise<boolean> {
-    throw new Error('verify scope Method not implemented.');
-  }
-
-  public async generateRefreshToken(
-    client: Client,
-    user: User,
-    scope: string[],
-  ): Promise<string> {
-    const refreshToken = crypto.randomBytes(32).toString('hex');
-    return Promise.resolve(refreshToken);
-  }
-
-  public validateRedirectUri(
-    redirect_uri: string,
-    client: Client,
-  ): Promise<boolean> {
-    return Promise.resolve(client.redirectUris.includes(redirect_uri));
-  }
-
-  public getAuthorizationCode(
-    authorizationCode: string,
-  ): Promise<Falsey | AuthorizationCode> {
-    throw new Error('get authorization code Method not implemented.');
-  }
-
-  public revokeAuthorizationCode(code: AuthorizationCode): Promise<boolean> {
-    throw new Error('revoke authorization code Method not implemented.');
   }
 }

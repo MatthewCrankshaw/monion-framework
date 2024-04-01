@@ -18,9 +18,6 @@ export class OauthController {
 
     const grantType = oauthRequest.body.grant_type;
 
-    delete token.client;
-    delete token.user;
-
     if (grantType === 'client_credentials') {
       res.json({
         accessToken: token.accessToken,
@@ -29,8 +26,9 @@ export class OauthController {
     } else {
       res.json({
         accessToken: token.accessToken,
-        accessTokenExpiresAt: token.accessTokenExpiresAt,
+        accessTokenExpiresAt: token.accessTokenExpiresAt.toISOString(),
         refreshToken: token.refreshToken,
+        refreshTokenExpiresAt: token.refreshTokenExpiresAt.toISOString(),
       });
     }
   }

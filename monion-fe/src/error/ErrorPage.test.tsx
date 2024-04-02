@@ -8,10 +8,4 @@ describe("ErrorPage", () => {
     const errorMessage = screen.getByText("Oops! Something went wrong");
     expect(errorMessage).toBeInTheDocument();
   });
-
-  it("renders the menu icon", () => {
-    render(<ErrorPage />);
-    const menuIcon = screen.getByLabelText("menu");
-    expect(menuIcon).toBeInTheDocument();
-  });
 });

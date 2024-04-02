@@ -9,10 +9,10 @@ import {
   IconButton,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
 
-export const App = (): ReactElement => {
-  const navigate = useNavigate();
+export const Home = (): ReactElement => {
+  const { logout: performLogout } = useAuth();
 
   return (
     <Container maxWidth="lg">
@@ -31,8 +31,8 @@ export const App = (): ReactElement => {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Home
             </Typography>
-            <Button color="inherit" onClick={() => navigate("/login")}>
-              Login
+            <Button color="inherit" onClick={async () => await performLogout()}>
+              Logout
             </Button>
           </Toolbar>
         </AppBar>

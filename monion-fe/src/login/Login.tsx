@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -13,18 +13,24 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
-import { handleLogin } from "../utilities/login/loginHandler";
+import { useAuth } from "../auth/useAuth";
 
 export const Login = (): ReactElement => {
   const navigate = useNavigate();
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [errorMessage, setErrorMessage] = React.useState<string>("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const { isAuthenticated, login: performLogin } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const login = async () => {
     try {
-      await handleLogin(username, password);
-      navigate("/");
+      await performLogin(username, password);
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);

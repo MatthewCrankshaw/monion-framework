@@ -54,7 +54,7 @@ export class UserController {
       id: user.id,
       createdAt: user.createdAt.toISOString(),
       updatedAt: user.updatedAt.toISOString(),
-      username: user.username,
+      email: user.email,
     };
   }
 }

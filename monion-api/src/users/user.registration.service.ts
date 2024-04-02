@@ -14,20 +14,20 @@ export class UserRegistrationService {
   ) {}
 
   public async registerUser(user: UserDto): Promise<UserDto> {
-    await this.checkUsernameUnique(user.username);
+    await this.checkEmailUnique(user.email);
 
     user.password = await this.encryptPassword(user);
     const newUser = await this.createUser(user);
     return new UserDto(newUser);
   }
 
-  protected async checkUsernameUnique(username: string): Promise<void> {
+  protected async checkEmailUnique(email: string): Promise<void> {
     const existingUser = await this.usersRepository.findOne({
-      where: { username },
+      where: { email },
     });
 
     if (existingUser instanceof UserEntity) {
-      throw new ValidationError('Username is already taken');
+      throw new ValidationError('Email is already taken');
     }
   }
 

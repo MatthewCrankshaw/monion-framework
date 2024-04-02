@@ -18,7 +18,7 @@ export class OauthTables1702454092771 implements MigrationInterface {
         "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        "username" VARCHAR(254) UNIQUE,
+        "email" VARCHAR(254) UNIQUE,
         "password" TEXT
       );
     `);

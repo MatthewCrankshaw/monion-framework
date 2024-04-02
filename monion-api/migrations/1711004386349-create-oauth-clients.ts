@@ -14,20 +14,20 @@ export class CreateOauthClients1711004386349 implements MigrationInterface {
    */
   public async up(queryRunner: QueryRunner): Promise<void> {
     let existingUser = await queryRunner.query(
-      'SELECT * FROM "users" WHERE "username" = $1',
-      ['MonionSuperUser'],
+      'SELECT * FROM "users" WHERE "email" = $1',
+      ['admin@monion.com'],
     );
 
     if (existingUser.length === 0) {
       const userPassword = randomBytes(16).toString('hex');
       await queryRunner.query(
-        'INSERT INTO "users" ("username", "password") VALUES ($1, $2)',
-        ['MonionSuperUser', userPassword],
+        'INSERT INTO "users" ("email", "password") VALUES ($1, $2)',
+        ['admin@monion.com', userPassword],
       );
 
       existingUser = await queryRunner.query(
-        'SELECT * FROM "users" WHERE "username" = $1',
-        ['MonionSuperUser'],
+        'SELECT * FROM "users" WHERE "email" = $1',
+        ['admin@monion.com'],
       );
     }
 

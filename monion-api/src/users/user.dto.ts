@@ -15,7 +15,7 @@ export class UserDto {
       this.id = entity.id;
       this.createdAt = entity.createdAt;
       this.updatedAt = entity.updatedAt;
-      this.username = entity.username;
+      this.email = entity.email;
       this.password = entity.password;
     }
   }
@@ -36,7 +36,7 @@ export class UserDto {
 
   @IsNotEmpty()
   @IsEmail()
-  username: string;
+  email: string;
 
   @IsNotEmpty()
   @IsString()

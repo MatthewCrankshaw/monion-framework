@@ -65,7 +65,7 @@ export class OAuthService
   ): Promise<User | Falsey> {
     const user = await this.userRepository.findOne({
       where: {
-        username,
+        email: username,
       },
     });
 

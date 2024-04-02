@@ -22,7 +22,7 @@ export class UserEntity implements UserInterface {
       this.id = dto.id;
       this.createdAt = dto.createdAt;
       this.updatedAt = dto.updatedAt;
-      this.username = dto.username;
+      this.email = dto.email;
       this.password = dto.password;
     }
   }
@@ -37,7 +37,7 @@ export class UserEntity implements UserInterface {
    * The username of the user.
    */
   @Column({ type: 'text', nullable: true })
-  username: string;
+  email: string;
 
   /**
    * The encrypted password of the user.

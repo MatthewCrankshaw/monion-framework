@@ -1,14 +1,6 @@
 import React, { ReactElement } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Container,
-  Box,
-  IconButton,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { Typography, Container, Box, Button } from "@mui/material";
+import { TopToolbar } from "../toolbar/TopToolbar";
 import { useAuth } from "../auth/useAuth";
 
 export const Home = (): ReactElement => {
@@ -17,25 +9,11 @@ export const Home = (): ReactElement => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Home
-            </Typography>
-            <Button color="inherit" onClick={async () => await performLogout()}>
-              Logout
-            </Button>
-          </Toolbar>
-        </AppBar>
+        <TopToolbar heading="Home">
+          <Button color="inherit" onClick={async () => await performLogout()}>
+            Logout
+          </Button>
+        </TopToolbar>
         <Box
           display="flex"
           justifyContent="center"

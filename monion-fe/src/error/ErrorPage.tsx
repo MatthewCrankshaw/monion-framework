@@ -1,31 +1,12 @@
 import React, { ReactElement } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Container,
-  Box,
-  IconButton,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { Typography, Container, Box } from "@mui/material";
+import { TopToolbar } from "../toolbar/TopToolbar";
 
 export const ErrorPage = (): ReactElement => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
+        <TopToolbar heading="Oops" />
         <Box
           display="flex"
           justifyContent="center"

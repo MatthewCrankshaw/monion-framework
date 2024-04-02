@@ -1,19 +1,15 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import {
-  AppBar,
-  Toolbar,
-  Typography,
   Button,
   Container,
   Box,
-  IconButton,
   TextField,
   Alert,
   AlertTitle,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
+import { TopToolbar } from "../toolbar/TopToolbar";
 
 export const Login = (): ReactElement => {
   const navigate = useNavigate();
@@ -43,28 +39,11 @@ export const Login = (): ReactElement => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Login
-            </Typography>
-            <Button color="inherit" onClick={() => navigate("/")}>
-              Home
-            </Button>
-            <Button color="inherit" onClick={() => navigate("/register")}>
-              Register
-            </Button>
-          </Toolbar>
-        </AppBar>
+        <TopToolbar heading="Login">
+          <Button color="inherit" onClick={() => navigate("/register")}>
+            Register
+          </Button>
+        </TopToolbar>
         <Box
           display="flex"
           flexDirection="column"

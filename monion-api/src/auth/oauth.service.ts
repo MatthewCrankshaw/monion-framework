@@ -193,7 +193,7 @@ export class OAuthService
    * @returns {string}
    */
   protected getKey(): string {
-    return fs.readFileSync('res/development_private_key.pem', 'utf8');
+    return fs.readFileSync(process.env.ECDSA_PRIVATE_KEY_PATH, 'utf8');
   }
 
   /**

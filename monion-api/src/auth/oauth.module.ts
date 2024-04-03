@@ -58,6 +58,6 @@ import { OAuthHandlerService } from './oauth-handler.service';
       },
     },
   ],
-  exports: [OAuthModule, OAuth2Server, OAuthHandlerService],
+  exports: [OAuthModule, OAuth2Server, OAuthHandlerService, OAuthMiddleware],
 })
 export class OAuthModule {}

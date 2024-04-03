@@ -14,8 +14,9 @@ export class OAuthHandlerService {
         message: error.message,
       });
     } else if (error instanceof Error) {
+      // TODO if in a development environment then return the error in the response otherwise mask the error message
       res.status(500).json({
-        message: error.message,
+        message: 'Internal Server Error',
       });
     }
   }

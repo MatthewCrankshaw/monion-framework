@@ -1,13 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import * as fs from 'fs';
 
 async function bootstrap() {
-  const httpsOptions = {
-    key: fs.readFileSync(process.env.SSL_KEY_PATH, 'utf8'),
-    cert: fs.readFileSync(process.env.SSL_CERT_PATH, 'utf8'),
-  };
+  // If ssl keys are required for the server, uncomment the following lines
+  // const httpsOptions = {
+  //   key: fs.readFileSync(process.env.SSL_KEY_PATH, 'utf8'),
+  //   cert: fs.readFileSync(process.env.SSL_CERT_PATH, 'utf8'),
+  // };
+  const httpsOptions = undefined;
 
   const app = await NestFactory.create(AppModule, { httpsOptions });
   app.enableCors({

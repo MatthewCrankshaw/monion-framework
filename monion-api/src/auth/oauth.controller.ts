@@ -2,6 +2,7 @@
 import { Controller, Get, Post, Request, Response } from '@nestjs/common';
 import OAuth2Server = require('@node-oauth/oauth2-server');
 import { OAuthHandlerService } from './oauth-handler.service';
+import { buildResponse } from 'src/utilities/response/response.builder.service';
 
 @Controller('oauth')
 export class OauthController {
@@ -24,17 +25,20 @@ export class OauthController {
       const grantType = oauthRequest.body.grant_type;
 
       if (grantType === 'client_credentials') {
-        res.json({
+        const data = buildResponse({
           accessToken: token.accessToken,
           accessTokenExpiresAt: token.accessTokenExpiresAt,
         });
+        res.status(200).json(data);
       } else {
-        res.json({
+        const data = buildResponse({
           accessToken: token.accessToken,
           accessTokenExpiresAt: token.accessTokenExpiresAt.toISOString(),
           refreshToken: token.refreshToken,
           refreshTokenExpiresAt: token.refreshTokenExpiresAt.toISOString(),
         });
+
+        res.status(200).json(data);
       }
     } catch (error: Error | unknown) {
       console.log(error);

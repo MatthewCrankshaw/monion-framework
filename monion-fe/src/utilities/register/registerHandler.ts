@@ -18,7 +18,7 @@ export const handleRegister = async (
 
   if (!response.ok) {
     const responseBody = await response.json();
-    const errorMessage = responseBody.message || response.statusText;
+    const errorMessage = responseBody.data.message || response.statusText;
     console.log("response", responseBody);
     throw new Error(errorMessage);
   }

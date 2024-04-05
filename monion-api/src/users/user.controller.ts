@@ -12,6 +12,7 @@ import { Response } from 'express';
 import { UserDto } from './user.dto';
 import { HandlerService } from 'src/error/handler.service';
 import { UserRetrievalService } from './user.retrieval.service';
+import { buildResponse } from 'src/utilities/response/response.builder.service';
 
 @Controller('user')
 export class UserController {
@@ -29,7 +30,8 @@ export class UserController {
     try {
       const createdUser = await this.usersService.registerUser(user);
       const responseData = this.makeResponse(createdUser);
-      res.json(responseData);
+      const data = buildResponse(responseData);
+      res.json(data);
     } catch (error: unknown) {
       this.handler.handle(error, res);
     }
@@ -43,7 +45,8 @@ export class UserController {
     try {
       const user = await this.retrievalService.getById(id);
       const responseData = this.makeResponse(user);
-      res.json(responseData);
+      const data = buildResponse(responseData);
+      res.json(data);
     } catch (error: unknown) {
       this.handler.handle(error, res);
     }

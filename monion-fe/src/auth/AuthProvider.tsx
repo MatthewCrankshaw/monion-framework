@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error(response.statusText);
     } else {
       const data = await response.json();
-      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("accessToken", data.data.accessToken);
       setIsAuthenticated(true);
     }
   };
